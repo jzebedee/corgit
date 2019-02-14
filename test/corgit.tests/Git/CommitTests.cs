@@ -5,8 +5,10 @@ using Xunit;
 
 namespace corgit.tests
 {
-    partial class GitTests
+    public class CommitTests
     {
+        private Git Git { get; } = new Git();
+
         [Fact]
         public void ParseSingleParentCommit()
         {
