@@ -144,21 +144,14 @@ namespace corgit
             return new GitCommit(match.Groups[1].Value, match.Groups[4].Value, parents, match.Groups[2].Value);
         }
 
-        public IEnumerable<string> Add(IEnumerable<string> paths)
+        public IEnumerable<string> Add(IEnumerable<string> paths = null)
         {
             yield return "add";
             yield return "-A";
             yield return "--";
-            if (paths?.Any() ?? false)
+            foreach (var path in (paths ?? Enumerable.Empty<string>()).DefaultIfEmpty("."))
             {
-                foreach(var path in paths)
-                {
-                    yield return path;
-                }
-            }
-            else
-            {
-                yield return ".";
+                yield return path;
             }
         }
 
