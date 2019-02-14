@@ -16,24 +16,15 @@ steps:
     projects: '**/*tests/*.csproj'
     arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
 - script: |
-    dotnet pack    src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY/package
+    dotnet pack    src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY/package --version-suffix 'CI-$(Build.BuildNumber)'
     dotnet publish src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: $(Build.ArtifactStagingDirectory)
     ArtifactName: 'pub'
-#- task: DotNetCoreCLI@2
-#  inputs:
-#    command: 'push'
-#    nuGetFeedType: 'external' # Required when command == push. Options: internal, external
-#    packagesToPush: '$(build.artifactStagingDirectory)/*.nupkg' # Required when command == push
-#    publishFeedCredentials: 'nuget.org scorpdx'
-#    #nuget.org scorpdx
-#    #publishVstsFeed: # Required when command == push && NuGetFeedType == internal
-#    #publishFeedCredentials: # Required when command == push && NuGetFeedType == external
-#- task: NuGetCommand@2
-#  inputs:
-#    command: push
-#    nuGetFeedType: external
-#    publishFeedCredentials: 'nuget.org scorpdx'
-#    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+- task: NuGetCommand@2
+  inputs:
+    command: push
+    nuGetFeedType: external
+    publishFeedCredentials: 'corgit nuget.org'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/package/*.nupkg'
