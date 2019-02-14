@@ -1,0 +1,42 @@
+﻿namespace corgit
+{
+    public partial class Git
+    {
+        public enum GitErrorCode
+        {
+            BadConfigFile,
+            AuthenticationFailed,
+            NoUserNameConfigured,
+            NoUserEmailConfigured,
+            NoRemoteRepositorySpecified,
+            NotAGitRepository,
+            NotAtRepositoryRoot,
+            Conflict,
+            StashConflict,
+            UnmergedChanges,
+            PushRejected,
+            RemoteConnectionError,
+            DirtyWorkTree,
+            CantOpenResource,
+            GitNotFound,
+            CantCreatePipe,
+            CantAccessRemote,
+            RepositoryNotFound,
+            RepositoryIsLocked,
+            BranchNotFullyMerged,
+            NoRemoteReference,
+            InvalidBranchName,
+            BranchAlreadyExists,
+            NoLocalChanges,
+            NoStashFound,
+            LocalChangesOverwritten,
+            NoUpstreamBranch,
+            IsInSubmodule,
+            WrongCase,
+            CantLockRef,
+            CantRebaseMultipleBranches,
+            PatchDoesNotApply,
+            NoPathFound,
+        }
+    }
+}
