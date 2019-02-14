@@ -1,0 +1,39 @@
+# Build ASP.NET Core project using Azure Pipelines
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core?view=vsts
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+  
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- script: |
+    dotnet build   src/corgit --configuration $(buildConfiguration)            --output $BUILD_BINARIESDIRECTORY
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    projects: '**/*test/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+- script: |
+    dotnet pack    src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY/package
+    dotnet publish src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: $(Build.ArtifactStagingDirectory)
+    ArtifactName: 'pub'
+#- task: DotNetCoreCLI@2
+#  inputs:
+#    command: 'push'
+#    nuGetFeedType: 'external' # Required when command == push. Options: internal, external
+#    packagesToPush: '$(build.artifactStagingDirectory)/*.nupkg' # Required when command == push
+#    publishFeedCredentials: 'nuget.org scorpdx'
+#    #nuget.org scorpdx
+#    #publishVstsFeed: # Required when command == push && NuGetFeedType == internal
+#    #publishFeedCredentials: # Required when command == push && NuGetFeedType == external
+#- task: NuGetCommand@2
+#  inputs:
+#    command: push
+#    nuGetFeedType: external
+#    publishFeedCredentials: 'nuget.org scorpdx'
+#    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
