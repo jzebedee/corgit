@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.0.2</Version>
+    <Authors>jzebedee</Authors>
+    <PackageProjectUrl>https://github.com/jzebedee/corgit</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/jzebedee/corgit/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl></RepositoryUrl>
+    <PackageTags>git mingit corgit git-for-windows libgit libgit2 libgit2sharp git.net git# gitsharp</PackageTags>
+  </PropertyGroup>
+</Project>
