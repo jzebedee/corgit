@@ -5,53 +5,58 @@ using System.Collections.Generic;
 
 namespace corgit
 {
-    public class GitFileStatus : IEquatable<GitFileStatus>
+    public struct GitFileStatus : IEquatable<GitFileStatus>
     {
-        public GitFileStatus(char x, char y, string path, string rename)
+        public readonly char X;
+        public readonly char Y;
+        public readonly string Rename;
+        public readonly string Path;
+
+        public GitFileStatus(char x, char y, string rename, string path)
         {
             X = x;
             Y = y;
-            Path = path;
             Rename = rename;
+            Path = path;
         }
-
-        public char X { get; }
-        public char Y { get; }
-        public string Path { get; }
-        public string Rename { get; }
 
         public override bool Equals(object obj)
-        {
-            return Equals(obj as GitFileStatus);
-        }
+            => obj is GitFileStatus other && Equals(other);
 
         public bool Equals(GitFileStatus other)
-        {
-            return other != null &&
-                   X == other.X &&
-                   Y == other.Y &&
-                   Path == other.Path &&
-                   Rename == other.Rename;
-        }
+            => X == other.X
+            && Y == other.Y
+            && Rename == other.Rename
+            && Path == other.Path;
 
         public override int GetHashCode()
         {
-            var hashCode = -865002436;
+            var hashCode = 540761540;
             hashCode = hashCode * -1521134295 + X.GetHashCode();
             hashCode = hashCode * -1521134295 + Y.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Path);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Rename);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Path);
             return hashCode;
         }
 
-        public static bool operator ==(GitFileStatus left, GitFileStatus right)
+        public void Deconstruct(out char x, out char y, out string rename, out string path)
         {
-            return EqualityComparer<GitFileStatus>.Default.Equals(left, right);
+            x = X;
+            y = Y;
+            rename = Rename;
+            path = Path;
         }
 
+        public static implicit operator (char X, char Y, string Rename, string Path) (GitFileStatus value)
+            => (value.X, value.Y, value.Rename, value.Path);
+
+        public static implicit operator GitFileStatus((char X, char Y, string Rename, string Path) value)
+            => new GitFileStatus(value.X, value.Y, value.Rename, value.Path);
+
+        public static bool operator ==(GitFileStatus left, GitFileStatus right)
+            => Equals(left, right);
+
         public static bool operator !=(GitFileStatus left, GitFileStatus right)
-        {
-            return !(left == right);
-        }
+            => !(left == right);
     }
 }

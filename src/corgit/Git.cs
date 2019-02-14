@@ -93,23 +93,21 @@ namespace corgit
         {
             ReadOnlySpan<char> ParseEntry(ReadOnlySpan<char> entry, out GitFileStatus fileStatus)
             {
-                fileStatus = null;
+                fileStatus = default;
                 if (entry.Length <= 4)
                 {
                     return null;
                 }
 
-                var fs = new GitFileStatus()
-                {
-                    X = entry[0],
-                    Y = entry[1],
-                    //space = entry[2]
-                };
-
+                string Rename = null;
+                string Path;
+                char X = entry[0];
+                char Y = entry[1];
+                //space = entry[2]
                 entry = entry.Slice(3); //X + Y + space
 
                 int lastIndex;
-                switch (fs.X)
+                switch (X)
                 {
                     case 'R':
                     case 'C':
@@ -119,7 +117,7 @@ namespace corgit
                             return null;
                         }
 
-                        fs.Rename = entry.Slice(0, lastIndex).ToString();
+                        Rename = entry.Slice(0, lastIndex).ToString();
                         entry = entry.Slice(lastIndex + 1);
                         break;
                 }
@@ -130,13 +128,13 @@ namespace corgit
                     return null;
                 }
 
-                fs.Path = entry.Slice(0, lastIndex).ToString();
+                Path = entry.Slice(0, lastIndex).ToString();
 
                 //from: git.ts
                 // If path ends with slash, it must be a nested git repo
                 if (entry[lastIndex - 1] != '/')
                 {
-                    fileStatus = fs;
+                    fileStatus = (X, Y, Rename, Path);
                 }
 
                 return entry.Slice(lastIndex + 1);
