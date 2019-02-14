@@ -15,15 +15,29 @@ namespace corgit
 
         private readonly Git _git = new Git();
 
-        private Process CreateGitProcess(string arguments = "") => new Process()
+        private Process CreateGitProcess(string arguments = "", IEnumerable<KeyValuePair<string, string>> env = null)
         {
-            StartInfo = new ProcessStartInfo(_gitPath, arguments)
+            var proc = new Process()
             {
-                WorkingDirectory = _workingDirectory,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
+                StartInfo = new ProcessStartInfo(_gitPath, arguments)
+                {
+                    WorkingDirectory = _workingDirectory,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                },
+            };
+
+            if (env != null)
+            {
+                foreach (var kvp in env)
+                {
+                    proc.StartInfo.Environment[kvp.Key] = kvp.Value;
+                }
             }
-        };
+
+            return proc;
+        }
 
         public struct ExecutionResult
         {
@@ -46,11 +60,13 @@ namespace corgit
         public Task<ExecutionResult> RunGitAsync(IEnumerable<string> arguments, string stdin = null)
             => RunGitAsync(string.Join(" ", arguments), stdin);
 
-        public async Task<ExecutionResult> RunGitAsync(string arguments = "", string stdin = null)
+        public async Task<ExecutionResult> RunGitAsync(string arguments = "",
+                                                       string stdin = null,
+                                                       IEnumerable<KeyValuePair<string, string>> env = null)
         {
             var tcs = new TaskCompletionSource<int>();
 
-            using (var proc = CreateGitProcess(arguments))
+            using (var proc = CreateGitProcess(arguments, env))
             {
                 proc.StartInfo.RedirectStandardInput = stdin != null;
                 proc.EnableRaisingEvents = true;
