@@ -57,7 +57,9 @@ namespace corgit
             public override string ToString() => (ExitCode, Output, Error).ToString();
         }
 
-        public Task<ExecutionResult> RunGitAsync(IEnumerable<string> arguments, string stdin = null)
+        public Task<ExecutionResult> RunGitAsync(IEnumerable<string> arguments,
+                                                 string stdin = null,
+                                                 IEnumerable<KeyValuePair<string, string>> env = null)
             => RunGitAsync(string.Join(" ", arguments), stdin);
 
         public async Task<ExecutionResult> RunGitAsync(string arguments = "",
