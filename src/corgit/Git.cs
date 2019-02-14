@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace corgit
@@ -86,6 +87,66 @@ namespace corgit
 
             var parents = (match.Groups[3].Success && !string.IsNullOrEmpty(match.Groups[3].Value)) ? match.Groups[3].Value.Split(' ') : null;
             return new GitCommit(match.Groups[1].Value, match.Groups[4].Value, parents, match.Groups[2].Value);
+        }
+
+        public List<GitFileStatus> ParseStatus(ReadOnlySpan<char> status)
+        {
+            ReadOnlySpan<char> ParseEntry(ReadOnlySpan<char> entry, out GitFileStatus fileStatus)
+            {
+                fileStatus = null;
+                if (entry.Length <= 4)
+                {
+                    return null;
+                }
+
+                var fs = new GitFileStatus()
+                {
+                    X = entry[0],
+                    Y = entry[1],
+                    //space = entry[2]
+                };
+
+                entry = entry.Slice(3); //X + Y + space
+
+                int lastIndex;
+                switch (fs.X)
+                {
+                    case 'R':
+                    case 'C':
+                        lastIndex = entry.IndexOf('\0');
+                        if (lastIndex == -1)
+                        {
+                            return null;
+                        }
+
+                        fs.Rename = entry.Slice(0, lastIndex).ToString();
+                        entry = entry.Slice(lastIndex + 1);
+                        break;
+                }
+
+                lastIndex = entry.IndexOf('\0');
+                if (lastIndex == -1)
+                {
+                    return null;
+                }
+
+                fs.Path = entry.Slice(0, lastIndex).ToString();
+
+                //from: git.ts
+                // If path ends with slash, it must be a nested git repo
+                if (entry[lastIndex - 1] != '/')
+                {
+                    fileStatus = fs;
+                }
+
+                return entry.Slice(lastIndex + 1);
+            }
+
+            var parsed = new List<GitFileStatus>();
+            while ((status = ParseEntry(status, out GitFileStatus fileStatus)) != null)
+                parsed.Add(fileStatus);
+
+            return parsed;
         }
     }
 }

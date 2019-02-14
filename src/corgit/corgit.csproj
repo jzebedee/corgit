@@ -9,4 +9,7 @@
     <RepositoryUrl>https://github.com/jzebedee/corgit</RepositoryUrl>
     <PackageTags>git corgit mingit git-for-windows libgit libgit2 libgit2sharp git.net git# gitsharp</PackageTags>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.2" />
+  </ItemGroup>
 </Project>
