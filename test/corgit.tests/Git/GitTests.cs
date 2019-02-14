@@ -10,7 +10,7 @@ namespace corgit.tests
         private Git Git { get; } = new Git();
 
         [Fact]
-        public void VersionTest()
+        public void ParseVersion()
         {
             var result = Git.ParseVersion("git version 2.18.0.windows.1");
             Assert.Equal("2.18.0.windows.1", result);
