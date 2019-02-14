@@ -99,12 +99,12 @@ namespace corgit
         public async Task<ExecutionResult> InitAsync()
             => await RunGitAsync("init");
 
-        public async Task<IEnumerable<Git.GitCommit>> LogAsync(Git.LogOptions options = default)
+        public async Task<IEnumerable<GitCommit>> LogAsync(Git.LogOptions options = default)
         {
             var result = await RunGitAsync(_git.Log(options));
             if (result.ExitCode == 1)
             {
-                return Enumerable.Empty<Git.GitCommit>();
+                return Enumerable.Empty<GitCommit>();
             }
             else
             {
