@@ -13,8 +13,8 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: test
-    projects: '**/*test/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    projects: '**/*tests/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
 - script: |
     dotnet pack    src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY/package
     dotnet publish src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY
