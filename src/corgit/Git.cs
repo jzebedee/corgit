@@ -158,12 +158,12 @@ namespace corgit
         public IEnumerable<string> Config(string key, string value = null, string scope = null)
         {
             yield return "config";
-            if(!string.IsNullOrEmpty(scope))
+            if (!string.IsNullOrEmpty(scope))
             {
                 yield return $"--{scope}";
             }
             yield return key;
-            if(!string.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value))
             {
                 yield return value;
             }
