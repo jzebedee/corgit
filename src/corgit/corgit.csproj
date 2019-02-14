@@ -2,11 +2,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Version>0.0.2</Version>
+    <VersionPrefix>0.1</VersionPrefix>
     <Authors>jzebedee</Authors>
     <PackageProjectUrl>https://github.com/jzebedee/corgit</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/jzebedee/corgit/blob/master/LICENSE</PackageLicenseUrl>
-    <RepositoryUrl></RepositoryUrl>
-    <PackageTags>git mingit corgit git-for-windows libgit libgit2 libgit2sharp git.net git# gitsharp</PackageTags>
+    <RepositoryUrl>https://github.com/jzebedee/corgit</RepositoryUrl>
+    <PackageTags>git corgit mingit git-for-windows libgit libgit2 libgit2sharp git.net git# gitsharp</PackageTags>
   </PropertyGroup>
 </Project>
