@@ -110,14 +110,14 @@ namespace corgit
         }
 
         public async Task<ExecutionResult> StatusAsync()
-            => await RunGitAsync("status");
+            => await RunGitAsync(GitArguments.Status());
 
         public async Task<ExecutionResult> InitAsync()
-            => await RunGitAsync("init");
+            => await RunGitAsync(GitArguments.Init());
 
-        public async Task<IEnumerable<GitCommit>> LogAsync(Git.LogOptions options = default)
+        public async Task<IEnumerable<GitCommit>> LogAsync(GitArguments.LogOptions options = default)
         {
-            var result = await RunGitAsync(_git.Log(options));
+            var result = await RunGitAsync(GitArguments.Log(options));
             if (result.ExitCode == 1)
             {
                 return Enumerable.Empty<GitCommit>();
@@ -128,16 +128,16 @@ namespace corgit
             }
         }
 
-        public async Task<ExecutionResult> CommitAsync(string message = "", Git.CommitOptions options = default)
-            => await RunGitAsync(_git.Commit(options), message);
+        public async Task<ExecutionResult> CommitAsync(string message = "", GitArguments.CommitOptions options = default)
+            => await RunGitAsync(GitArguments.Commit(options), message);
 
         public Task<ExecutionResult> AddAsync(params string[] paths)
             => AddAsync(paths.AsEnumerable());
 
         public async Task<ExecutionResult> AddAsync(IEnumerable<string> paths)
-            => await RunGitAsync(_git.Add(paths));
+            => await RunGitAsync(GitArguments.Add(paths));
 
         public async Task<ExecutionResult> ConfigAsync(string key, string value = null, string scope = null)
-            => await RunGitAsync(_git.Config(key, value, scope));
+            => await RunGitAsync(GitArguments.Config(key, value, scope));
     }
 }

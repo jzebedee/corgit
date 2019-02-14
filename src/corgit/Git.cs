@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-//https://github.com/Microsoft/vscode/tree/master/extensions/git
 
 namespace corgit
 {
     public partial class Git
     {
-        private const string CommitFormat = "%H\n%ae\n%P\n%B";
-        private const string CommitSeparator = "\x00\x00";
+        internal const string CommitFormat = "%H\n%ae\n%P\n%B";
+        internal const string CommitSeparator = "\x00\x00";
 
         private static readonly Regex r_parseVersion = new Regex(@"^git version ", RegexOptions.Compiled);
         public string ParseVersion(string versionString)
@@ -51,58 +47,6 @@ namespace corgit
             return null;
         }
 
-        public struct CommitOptions
-        {
-            public bool? All { get; set; }
-            public bool? Amend { get; set; }
-            public bool? Signoff { get; set; }
-            public bool? SignCommit { get; set; }
-            public bool? Empty { get; set; }
-        }
-        public IEnumerable<string> Commit(CommitOptions options = default)
-        {
-            yield return "commit";
-            yield return "--quiet";
-            yield return "--allow-empty-message";
-            yield return "--file";
-            yield return "-";
-
-            if (options.All == true)
-            {
-                yield return "--all";
-            }
-
-            if (options.Amend == true)
-            {
-                yield return "--amend";
-            }
-
-            if (options.Signoff == true)
-            {
-                yield return "--signoff";
-            }
-
-            if (options.SignCommit == true)
-            {
-                yield return "-S";
-            }
-
-            if (options.Empty == true)
-            {
-                yield return "--allow-empty";
-            }
-        }
-
-        public struct LogOptions
-        {
-            public int? MaxEntries { get; set; }
-        }
-        public IEnumerable<string> Log(LogOptions options = default)
-        {
-            yield return "log";
-            yield return $"-{options.MaxEntries ?? 32}";
-            yield return $"--pretty=format:{CommitFormat}{CommitSeparator}";
-        }
         public IEnumerable<GitCommit> ParseLog(string log)
         {
             int index = 0;
@@ -142,31 +86,6 @@ namespace corgit
 
             var parents = (match.Groups[3].Success && !string.IsNullOrEmpty(match.Groups[3].Value)) ? match.Groups[3].Value.Split(' ') : null;
             return new GitCommit(match.Groups[1].Value, match.Groups[4].Value, parents, match.Groups[2].Value);
-        }
-
-        public IEnumerable<string> Add(IEnumerable<string> paths = null)
-        {
-            yield return "add";
-            yield return "-A";
-            yield return "--";
-            foreach (var path in (paths ?? Enumerable.Empty<string>()).DefaultIfEmpty("."))
-            {
-                yield return path;
-            }
-        }
-
-        public IEnumerable<string> Config(string key, string value = null, string scope = null)
-        {
-            yield return "config";
-            if (!string.IsNullOrEmpty(scope))
-            {
-                yield return $"--{scope}";
-            }
-            yield return key;
-            if (!string.IsNullOrEmpty(value))
-            {
-                yield return value;
-            }
         }
     }
 }
