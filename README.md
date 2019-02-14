@@ -1,6 +1,11 @@
 # corgit
 
-[![Build Status](https://dev.azure.com/jzebedee/corgit/_apis/build/status/jzebedee.corgit?branchName=master)](https://dev.azure.com/jzebedee/corgit/_build/latest?definitionId=1&branchName=master)
+
+
+### Continuous Integration
+|Builds|Tests|
+|------|-----|
+|[![Build Status](https://dev.azure.com/jzebedee/corgit/_apis/build/status/jzebedee.corgit?branchName=master)](https://dev.azure.com/jzebedee/corgit/_build/latest?definitionId=1&branchName=master)|[![Test Results](https://img.shields.io/azure-devops/tests/jzebedee/corgit/1/master.svg?style=flat)](https://dev.azure.com/jzebedee/corgit/_build/latest?definitionId=1&branchName=master&view=ms.vss-test-web.build-test-results-tab)|
 
 ### NuGet
 |Stable|Prerelease|.NET CLI|
