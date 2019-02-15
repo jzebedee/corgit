@@ -9,11 +9,11 @@ namespace corgit
     {
         public struct CommitOptions
         {
-            public bool? All;
-            public bool? Amend;
-            public bool? Signoff;
-            public bool? SignCommit;
-            public bool? Empty;
+            public readonly bool? All;
+            public readonly bool? Amend;
+            public readonly bool? Signoff;
+            public readonly bool? SignCommit;
+            public readonly bool? Empty;
 
             public CommitOptions(bool? all = default,
                                  bool? amend = default,
@@ -64,7 +64,7 @@ namespace corgit
 
         public struct LogOptions
         {
-            public int? MaxEntries;
+            public readonly int? MaxEntries;
 
             public LogOptions(int? maxEntries = 32)
             {
