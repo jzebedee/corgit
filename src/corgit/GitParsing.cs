@@ -138,7 +138,7 @@ namespace corgit
             return entry.Slice(lastIndex + 1);
         }
 
-        public static IEnumerable<GitFileStatus> ParseStatus(string status)
+        public static List<GitFileStatus> ParseStatus(string status)
         {
             var parsed = new List<GitFileStatus>();
 
