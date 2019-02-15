@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using static corgit.Git;
+using static corgit.GitParsing;
 
 namespace corgit
 {
@@ -110,6 +110,7 @@ namespace corgit
 
         public static IEnumerable<string> Status()
         {
+            yield return "--no-optional-locks";
             yield return "status";
             yield return "-z";
             yield return "-u";

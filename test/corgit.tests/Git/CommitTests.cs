@@ -7,8 +7,6 @@ namespace corgit.tests
 {
     public class CommitTests
     {
-        private Git Git { get; } = new Git();
-
         [Fact]
         public void ParseSingleParentCommit()
         {
@@ -21,7 +19,7 @@ namespace corgit.tests
                                          "This is a commit message.",
                                          new[] { "8e5a374372b8393906c7e380dbb09349c5385554" },
                                          "john.doe@mail.com");
-            var actual = Git.ParseCommit(GIT_OUTPUT_SINGLE_PARENT);
+            var actual = GitParsing.ParseCommit(GIT_OUTPUT_SINGLE_PARENT);
             Assert.StrictEqual(expected, actual);
         }
 
@@ -37,7 +35,7 @@ namespace corgit.tests
                                          "This is a commit message.",
                                          new[] { "8e5a374372b8393906c7e380dbb09349c5385554", "df27d8c75b129ab9b178b386077da2822101b217" },
                                          "john.doe@mail.com");
-            var actual = Git.ParseCommit(GIT_OUTPUT_MULTIPLE_PARENTS);
+            var actual = GitParsing.ParseCommit(GIT_OUTPUT_MULTIPLE_PARENTS);
             Assert.StrictEqual(expected, actual);
         }
 
@@ -53,7 +51,7 @@ namespace corgit.tests
                                          "This is a commit message.",
                                          null,
                                          "john.doe@mail.com");
-            var actual = Git.ParseCommit(GIT_OUTPUT_NO_PARENTS);
+            var actual = GitParsing.ParseCommit(GIT_OUTPUT_NO_PARENTS);
             Assert.StrictEqual(expected, actual);
         }
     }

@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace corgit
 {
-    public partial class Git
+    public static class GitParsing
     {
         internal const string CommitFormat = "%H\n%ae\n%P\n%B";
         internal const string CommitSeparator = "\x00\x00";
 
         private static readonly Regex r_parseVersion = new Regex(@"^git version ", RegexOptions.Compiled);
-        public string ParseVersion(string versionString)
+        public static string ParseVersion(string versionString)
         {
             return r_parseVersion.Replace(versionString, "");
         }
@@ -33,7 +34,7 @@ namespace corgit
             //template:
             //{new Regex(@"", RegexOptions.Compiled), GitErrorCode. },
         };
-        public GitErrorCode? ParseErrorCode(string gitError)
+        public static GitErrorCode? ParseErrorCode(string gitError)
         {
             foreach (var kvp in _gitErrorRegexes)
             {
@@ -47,7 +48,7 @@ namespace corgit
             return null;
         }
 
-        public IEnumerable<GitCommit> ParseLog(string log)
+        public static IEnumerable<GitCommit> ParseLog(string log)
         {
             int index = 0;
             while (index < log.Length)
@@ -76,7 +77,7 @@ namespace corgit
         }
 
         private static readonly Regex r_parseCommit = new Regex(@"^([0-9a-f]{40})\n(.*)\n(.*)\n([\s\S]*)$", RegexOptions.Multiline | RegexOptions.Compiled);
-        public GitCommit ParseCommit(string commit)
+        public static GitCommit ParseCommit(string commit)
         {
             var match = r_parseCommit.Match(commit.Trim());
             if (!match.Success)
@@ -86,6 +87,66 @@ namespace corgit
 
             var parents = (match.Groups[3].Success && !string.IsNullOrEmpty(match.Groups[3].Value)) ? match.Groups[3].Value.Split(' ') : null;
             return new GitCommit(match.Groups[1].Value, match.Groups[4].Value, parents, match.Groups[2].Value);
+        }
+
+        public static ReadOnlySpan<char> ParseStatusEntry(ReadOnlySpan<char> entry, out GitFileStatus fileStatus)
+        {
+            fileStatus = default;
+            if (entry.Length <= 4)
+            {
+                return null;
+            }
+
+            var X = (GitChangeType)entry[0];
+            var Y = (GitChangeType)entry[1];
+            //space = entry[2]
+            string Path;
+            string OriginalPath = null;
+            entry = entry.Slice(3); //X + Y + space
+
+            int lastIndex;
+            switch (X)
+            {
+                case GitChangeType.Renamed:
+                case GitChangeType.Copied:
+                    lastIndex = entry.IndexOf('\0');
+                    if (lastIndex == -1)
+                    {
+                        return null;
+                    }
+
+                    OriginalPath = entry.Slice(0, lastIndex).ToString();
+                    entry = entry.Slice(lastIndex + 1);
+                    break;
+            }
+
+            lastIndex = entry.IndexOf('\0');
+            if (lastIndex == -1)
+            {
+                return null;
+            }
+
+            Path = entry.Slice(0, lastIndex).ToString();
+
+            //from git.ts
+            // If path ends with slash, it must be a nested git repo
+            if (entry[lastIndex - 1] != '/')
+            {
+                fileStatus = (X: X, Y: Y, Path: Path, OriginalPath: OriginalPath);
+            }
+
+            return entry.Slice(lastIndex + 1);
+        }
+
+        public static IEnumerable<GitFileStatus> ParseStatus(string status)
+        {
+            var parsed = new List<GitFileStatus>();
+
+            ReadOnlySpan<char> s = status.AsSpan();
+            while ((s = ParseStatusEntry(s, out GitFileStatus fileStatus)) != null)
+                parsed.Add(fileStatus);
+
+            return parsed;
         }
     }
 }

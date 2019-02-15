@@ -13,8 +13,6 @@ namespace corgit
         private readonly string _gitPath;
         private readonly string _workingDirectory;
 
-        private readonly Git _git = new Git();
-
         private Process CreateGitProcess(string arguments = "", IEnumerable<KeyValuePair<string, string>> env = null)
         {
             var proc = new Process()
@@ -48,47 +46,54 @@ namespace corgit
                 this.Error = error;
             }
 
-            public int ExitCode { get; }
+            public readonly int ExitCode;
 
-            public string Output { get; }
+            public readonly string Output;
 
-            public string Error { get; }
+            public readonly string Error;
 
             public override string ToString() => (ExitCode, Output, Error).ToString();
         }
 
-        public Task<ExecutionResult> RunGitAsync(IEnumerable<string> arguments, string stdin = null)
-            => RunGitAsync(string.Join(" ", arguments), stdin);
+        private async Task<ExecutionResult> StartGitProcessAsync(Process proc)
+        {
+            var tcsFinished = new TaskCompletionSource<int>();
+            var tcsStarted = new TaskCompletionSource<bool>();
+
+            var error = tcsStarted.Task.ContinueWith(t => proc.StandardError.ReadToEndAsync()).Unwrap();
+            var output = tcsStarted.Task.ContinueWith(t => proc.StandardOutput.ReadToEndAsync()).Unwrap();
+
+            proc.EnableRaisingEvents = true;
+            proc.Exited += async (sender, e) =>
+            {
+                if (proc.ExitCode >= 0)
+                {
+                    tcsFinished.SetResult(proc.ExitCode);
+                }
+                else
+                {
+                    tcsFinished.SetException(new GitException("Failed to execute git",
+                        await error,
+                        await output,
+                        proc.ExitCode,
+                        proc.StartInfo.Arguments));
+                }
+            };
+            proc.Start();
+            tcsStarted.SetResult(true);
+
+            return new ExecutionResult(await tcsFinished.Task, await output, await error);
+        }
 
         public async Task<ExecutionResult> RunGitAsync(string arguments = "",
                                                        string stdin = null,
                                                        IEnumerable<KeyValuePair<string, string>> env = null)
         {
-            var tcs = new TaskCompletionSource<int>();
-
             using (var proc = CreateGitProcess(arguments, env))
             {
                 proc.StartInfo.RedirectStandardInput = stdin != null;
-                proc.EnableRaisingEvents = true;
-                proc.Exited += (sender, e) =>
-                {
-                    if (proc.ExitCode >= 0)
-                    {
-                        tcs.SetResult(proc.ExitCode);
-                    }
-                    else
-                    {
-                        var error = proc.StandardError.ReadToEnd();
-                        var output = proc.StandardOutput.ReadToEnd();
-                        tcs.SetException(new GitException("Failed to execute git",
-                            error,
-                            output,
-                            proc.ExitCode,
-                            _git.ParseErrorCode(error),
-                            proc.StartInfo.Arguments));
-                    }
-                };
-                proc.Start();
+                var t = StartGitProcessAsync(proc);
+
                 if (!string.IsNullOrEmpty(stdin))
                 {
                     using (proc.StandardInput)
@@ -97,11 +102,14 @@ namespace corgit
                     }
                 }
 
-                return new ExecutionResult(await tcs.Task,
-                    await proc.StandardOutput.ReadToEndAsync(),
-                    await proc.StandardError.ReadToEndAsync());
+                return await t;
             }
         }
+
+        public Task<ExecutionResult> RunGitAsync(IEnumerable<string> arguments,
+                                                string stdin = null,
+                                                IEnumerable<KeyValuePair<string, string>> env = null)
+           => RunGitAsync(string.Join(" ", arguments), stdin, env);
 
         public Corgit(string gitPath, string workingDirectory)
         {
@@ -109,8 +117,8 @@ namespace corgit
             _workingDirectory = workingDirectory;
         }
 
-        public async Task<ExecutionResult> StatusAsync()
-            => await RunGitAsync(GitArguments.Status());
+        public async Task<IEnumerable<GitFileStatus>> StatusAsync()
+            => GitParsing.ParseStatus((await RunGitAsync(GitArguments.Status())).Output);
 
         public async Task<ExecutionResult> InitAsync()
             => await RunGitAsync(GitArguments.Init());
@@ -124,7 +132,7 @@ namespace corgit
             }
             else
             {
-                return _git.ParseLog(result.Output);
+                return GitParsing.ParseLog(result.Output);
             }
         }
 
