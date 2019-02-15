@@ -8,6 +8,10 @@
     <PackageLicenseUrl>https://github.com/jzebedee/corgit/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/jzebedee/corgit</RepositoryUrl>
     <PackageTags>git corgit mingit git-for-windows libgit libgit2 libgit2sharp git.net git# gitsharp</PackageTags>
+    <Description>Minimal .NET Standard wrapper library to run and parse output from the git command-line utility.
+
+Written in C#
+MIT Licensed</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.2" />
