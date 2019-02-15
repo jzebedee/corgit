@@ -1,6 +1,9 @@
 # corgit
 
+Minimal .NET Standard wrapper library to run and parse output from the git command-line utility.
 
+Written in C#
+MIT Licensed
 
 ### Continuous Integration
 |Builds|Tests|
