@@ -97,6 +97,16 @@ namespace corgit
             }
         }
 
+        public static IEnumerable<string> Remove(IEnumerable<string> paths)
+        {
+            yield return "rm";
+            yield return "--";
+            foreach (var path in (paths ?? Enumerable.Empty<string>()))
+            {
+                yield return path;
+            }
+        }
+
         public static IEnumerable<string> Config(string key, string value = null, string scope = null)
         {
             yield return "config";

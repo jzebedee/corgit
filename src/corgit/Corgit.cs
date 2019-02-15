@@ -139,11 +139,17 @@ namespace corgit
         public async Task<ExecutionResult> CommitAsync(string message = "", GitArguments.CommitOptions options = default)
             => await RunGitAsync(GitArguments.Commit(options), message);
 
+        public async Task<ExecutionResult> AddAsync(IEnumerable<string> paths)
+            => await RunGitAsync(GitArguments.Add(paths));
+
         public Task<ExecutionResult> AddAsync(params string[] paths)
             => AddAsync(paths.AsEnumerable());
 
-        public async Task<ExecutionResult> AddAsync(IEnumerable<string> paths)
-            => await RunGitAsync(GitArguments.Add(paths));
+        public async Task<ExecutionResult> RemoveAsync(IEnumerable<string> paths)
+            => await RunGitAsync(GitArguments.Remove(paths));
+
+        public Task<ExecutionResult> RemoveAsync(params string[] paths)
+            => RemoveAsync(paths.AsEnumerable());
 
         public async Task<ExecutionResult> ConfigAsync(string key, string value = null, string scope = null)
             => await RunGitAsync(GitArguments.Config(key, value, scope));
