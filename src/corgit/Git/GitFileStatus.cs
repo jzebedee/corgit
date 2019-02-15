@@ -1,9 +1,7 @@
-﻿//https://github.com/Microsoft/vscode/tree/master/extensions/git
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace corgit
+namespace corgit.Git
 {
     public struct GitFileStatus : IEquatable<GitFileStatus>
     {

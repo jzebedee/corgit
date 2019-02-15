@@ -1,6 +1,4 @@
-﻿//https://github.com/Microsoft/vscode/tree/master/extensions/git
-
-namespace corgit
+﻿namespace corgit.Git
 {
     /// <summary>
     /// Modifier representing the status of a path

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using corgit.Git;
 using Xunit;
 
 namespace corgit.tests

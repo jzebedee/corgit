@@ -1,4 +1,4 @@
-﻿namespace corgit
+﻿namespace corgit.Git
 {
     public enum GitErrorCode
     {

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace corgit
+namespace corgit.Git
 {
     public class GitException : Exception
     {
