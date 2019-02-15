@@ -4,6 +4,9 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <!-- Required by Sonarcloud -->
+    <ProjectGuid>{a7e957eb-3c15-45e9-9530-790d00a488fc}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
