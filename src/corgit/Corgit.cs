@@ -13,8 +13,6 @@ namespace corgit
         private readonly string _gitPath;
         private readonly string _workingDirectory;
 
-        private readonly Git _git = new Git();
-
         private Process CreateGitProcess(string arguments = "", IEnumerable<KeyValuePair<string, string>> env = null)
         {
             var proc = new Process()
@@ -120,7 +118,7 @@ namespace corgit
         }
 
         public async Task<IEnumerable<GitFileStatus>> StatusAsync()
-            => _git.ParseStatus((await RunGitAsync(GitArguments.Status())).Output);
+            => GitParsing.ParseStatus((await RunGitAsync(GitArguments.Status())).Output);
 
         public async Task<ExecutionResult> InitAsync()
             => await RunGitAsync(GitArguments.Init());
@@ -134,7 +132,7 @@ namespace corgit
             }
             else
             {
-                return _git.ParseLog(result.Output);
+                return GitParsing.ParseLog(result.Output);
             }
         }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using static corgit.Git;
+using static corgit.GitParsing;
 
 namespace corgit
 {

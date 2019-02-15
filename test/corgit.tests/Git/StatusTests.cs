@@ -8,15 +8,13 @@ namespace corgit.tests
 {
     public class StatusTests
     {
-        private Git Git { get; } = new Git();
-
         [Fact]
         public void ParseEmptyStatus()
         {
             const string status = "";
 
             var expected = new List<GitFileStatus>();
-            var results = Git.ParseStatus(status);
+            var results = GitParsing.ParseStatus(status);
             Assert.Equal(expected, results);
         }
 
@@ -29,7 +27,7 @@ namespace corgit.tests
             {
                 (GitChangeType.Untracked, GitChangeType.Untracked, Path: "file.txt", null)
             };
-            var results = Git.ParseStatus(status);
+            var results = GitParsing.ParseStatus(status);
             Assert.Equal(expected, results);
         }
 
@@ -46,7 +44,7 @@ namespace corgit.tests
                 (GitChangeType.Untracked, GitChangeType.Untracked, Path: "file2.txt", null),
                 (GitChangeType.Untracked, GitChangeType.Untracked, Path: "file3.txt", null),
             };
-            var results = Git.ParseStatus(status);
+            var results = GitParsing.ParseStatus(status);
             Assert.Equal(expected, results);
         }
 
@@ -61,7 +59,7 @@ namespace corgit.tests
                 (GitChangeType.Untracked, GitChangeType.Untracked, Path: "file2.txt", OriginalPath: null),
                 (GitChangeType.Untracked, GitChangeType.Untracked, Path: "file3.txt", OriginalPath: null),
             };
-            var results = Git.ParseStatus(status);
+            var results = GitParsing.ParseStatus(status);
             Assert.Equal(expected, results);
         }
     }
