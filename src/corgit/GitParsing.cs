@@ -4,13 +4,13 @@ using System.Text.RegularExpressions;
 
 namespace corgit
 {
-    public class GitParsing
+    public static class GitParsing
     {
         internal const string CommitFormat = "%H\n%ae\n%P\n%B";
         internal const string CommitSeparator = "\x00\x00";
 
         private static readonly Regex r_parseVersion = new Regex(@"^git version ", RegexOptions.Compiled);
-        public string ParseVersion(string versionString)
+        public static string ParseVersion(string versionString)
         {
             return r_parseVersion.Replace(versionString, "");
         }
@@ -34,7 +34,7 @@ namespace corgit
             //template:
             //{new Regex(@"", RegexOptions.Compiled), GitErrorCode. },
         };
-        public GitErrorCode? ParseErrorCode(string gitError)
+        public static GitErrorCode? ParseErrorCode(string gitError)
         {
             foreach (var kvp in _gitErrorRegexes)
             {
@@ -48,7 +48,7 @@ namespace corgit
             return null;
         }
 
-        public IEnumerable<GitCommit> ParseLog(string log)
+        public static IEnumerable<GitCommit> ParseLog(string log)
         {
             int index = 0;
             while (index < log.Length)
@@ -77,7 +77,7 @@ namespace corgit
         }
 
         private static readonly Regex r_parseCommit = new Regex(@"^([0-9a-f]{40})\n(.*)\n(.*)\n([\s\S]*)$", RegexOptions.Multiline | RegexOptions.Compiled);
-        public GitCommit ParseCommit(string commit)
+        public static GitCommit ParseCommit(string commit)
         {
             var match = r_parseCommit.Match(commit.Trim());
             if (!match.Success)
@@ -89,7 +89,7 @@ namespace corgit
             return new GitCommit(match.Groups[1].Value, match.Groups[4].Value, parents, match.Groups[2].Value);
         }
 
-        public ReadOnlySpan<char> ParseStatusEntry(ReadOnlySpan<char> entry, out GitFileStatus fileStatus)
+        public static ReadOnlySpan<char> ParseStatusEntry(ReadOnlySpan<char> entry, out GitFileStatus fileStatus)
         {
             fileStatus = default;
             if (entry.Length <= 4)
@@ -138,7 +138,7 @@ namespace corgit
             return entry.Slice(lastIndex + 1);
         }
 
-        public IEnumerable<GitFileStatus> ParseStatus(string status)
+        public static IEnumerable<GitFileStatus> ParseStatus(string status)
         {
             var parsed = new List<GitFileStatus>();
 
