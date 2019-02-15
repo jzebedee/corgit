@@ -27,7 +27,7 @@ namespace corgit.tests
 
             var expected = new List<GitFileStatus>()
             {
-                ('?', '?', null, "file.txt")
+                (GitChangeType.Untracked, GitChangeType.Untracked, Path: "file.txt", null)
             };
             var results = Git.ParseStatus(status);
             Assert.Equal(expected, results);
@@ -42,9 +42,9 @@ namespace corgit.tests
 
             var expected = new List<GitFileStatus>()
             {
-                ('?', '?', null, "file.txt"),
-                ('?', '?', null, "file2.txt"),
-                ('?', '?', null, "file3.txt"),
+                (GitChangeType.Untracked, GitChangeType.Untracked, Path: "file.txt", null),
+                (GitChangeType.Untracked, GitChangeType.Untracked, Path: "file2.txt", null),
+                (GitChangeType.Untracked, GitChangeType.Untracked, Path: "file3.txt", null),
             };
             var results = Git.ParseStatus(status);
             Assert.Equal(expected, results);
@@ -57,9 +57,9 @@ namespace corgit.tests
 
             var expected = new List<GitFileStatus>()
             {
-                ('R', ' ', "newfile.txt", "file.txt"),
-                ('?', '?', null, "file2.txt"),
-                ('?', '?', null, "file3.txt"),
+                (GitChangeType.Renamed, GitChangeType.Unmodified, Path: "file.txt", OriginalPath: "newfile.txt"),
+                (GitChangeType.Untracked, GitChangeType.Untracked, Path: "file2.txt", OriginalPath: null),
+                (GitChangeType.Untracked, GitChangeType.Untracked, Path: "file3.txt", OriginalPath: null),
             };
             var results = Git.ParseStatus(status);
             Assert.Equal(expected, results);
