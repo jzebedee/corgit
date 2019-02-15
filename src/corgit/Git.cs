@@ -89,7 +89,7 @@ namespace corgit
             return new GitCommit(match.Groups[1].Value, match.Groups[4].Value, parents, match.Groups[2].Value);
         }
 
-        public List<GitFileStatus> ParseStatus(ReadOnlySpan<char> status)
+        public List<GitFileStatus> ParseStatus(string status)
         {
             ReadOnlySpan<char> ParseEntry(ReadOnlySpan<char> entry, out GitFileStatus fileStatus)
             {
@@ -141,7 +141,9 @@ namespace corgit
             }
 
             var parsed = new List<GitFileStatus>();
-            while ((status = ParseEntry(status, out GitFileStatus fileStatus)) != null)
+
+            ReadOnlySpan<char> s = status.AsSpan();
+            while ((s = ParseEntry(s, out GitFileStatus fileStatus)) != null)
                 parsed.Add(fileStatus);
 
             return parsed;
