@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28531.58
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "corgit", "src\corgit\corgit.csproj", "{AE0CA03B-6D08-451C-9A01-1D3F1290FA98}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B62A53AA-1D9F-48DC-B8BC-51B6647B3743}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "corgit.tests", "test\corgit.tests\corgit.tests.csproj", "{8D54FD49-1A1C-4D7B-A1D5-732B1A41708D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE0CA03B-6D08-451C-9A01-1D3F1290FA98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE0CA03B-6D08-451C-9A01-1D3F1290FA98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE0CA03B-6D08-451C-9A01-1D3F1290FA98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE0CA03B-6D08-451C-9A01-1D3F1290FA98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D54FD49-1A1C-4D7B-A1D5-732B1A41708D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D54FD49-1A1C-4D7B-A1D5-732B1A41708D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D54FD49-1A1C-4D7B-A1D5-732B1A41708D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D54FD49-1A1C-4D7B-A1D5-732B1A41708D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8D54FD49-1A1C-4D7B-A1D5-732B1A41708D} = {B62A53AA-1D9F-48DC-B8BC-51B6647B3743}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C72A9FCB-D501-46F2-AEA4-4FC710683811}
+	EndGlobalSection
+EndGlobal
