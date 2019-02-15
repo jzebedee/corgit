@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static corgit.Git;
 
 namespace corgit
 {
@@ -11,13 +10,12 @@ namespace corgit
                               string error,
                               string output,
                               int exitCode,
-                              GitErrorCode? gitError,
                               string gitCommand) : base(message)
         {
             this.Error = error;
             this.Output = output;
             this.ExitCode = exitCode;
-            this.GitError = gitError;
+            this.GitError = GitParsing.ParseErrorCode(error);
             this.GitCommand = gitCommand;
         }
 
