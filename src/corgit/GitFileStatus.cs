@@ -7,17 +7,17 @@ namespace corgit
 {
     public struct GitFileStatus : IEquatable<GitFileStatus>
     {
-        public readonly char X;
-        public readonly char Y;
-        public readonly string Rename;
+        public readonly GitChangeType X;
+        public readonly GitChangeType Y;
         public readonly string Path;
+        public readonly string OriginalPath;
 
-        public GitFileStatus(char x, char y, string rename, string path)
+        public GitFileStatus(GitChangeType x, GitChangeType y, string path, string originalPath)
         {
             X = x;
             Y = y;
-            Rename = rename;
             Path = path;
+            OriginalPath = originalPath;
         }
 
         public override bool Equals(object obj)
@@ -26,32 +26,35 @@ namespace corgit
         public bool Equals(GitFileStatus other)
             => X == other.X
             && Y == other.Y
-            && Rename == other.Rename
-            && Path == other.Path;
+            && Path == other.Path
+            && OriginalPath == other.OriginalPath;
 
         public override int GetHashCode()
         {
             var hashCode = 540761540;
             hashCode = hashCode * -1521134295 + X.GetHashCode();
             hashCode = hashCode * -1521134295 + Y.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Rename);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Path);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(OriginalPath);
             return hashCode;
         }
 
-        public void Deconstruct(out char x, out char y, out string rename, out string path)
+        public override string ToString()
+            => (((GitChangeType X, GitChangeType Y, string Path, string OriginalPath))this).ToString();
+
+        public void Deconstruct(out GitChangeType x, out GitChangeType y, out string path, out string originalPath)
         {
             x = X;
             y = Y;
-            rename = Rename;
             path = Path;
+            originalPath = OriginalPath;
         }
 
-        public static implicit operator (char X, char Y, string Rename, string Path) (GitFileStatus value)
-            => (value.X, value.Y, value.Rename, value.Path);
+        public static implicit operator (GitChangeType X, GitChangeType Y, string Path, string OriginalPath) (GitFileStatus value)
+            => (value.X, value.Y, value.Path, value.OriginalPath);
 
-        public static implicit operator GitFileStatus((char X, char Y, string Rename, string Path) value)
-            => new GitFileStatus(value.X, value.Y, value.Rename, value.Path);
+        public static implicit operator GitFileStatus((GitChangeType X, GitChangeType Y, string Path, string OriginalPath) value)
+            => new GitFileStatus(value.X, value.Y, value.Path, value.OriginalPath);
 
         public static bool operator ==(GitFileStatus left, GitFileStatus right)
             => Equals(left, right);
