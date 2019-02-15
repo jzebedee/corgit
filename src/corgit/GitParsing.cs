@@ -6,9 +6,6 @@ namespace corgit
 {
     public static class GitParsing
     {
-        internal const string CommitFormat = "%H\n%ae\n%P\n%B";
-        internal const string CommitSeparator = "\x00\x00";
-
         private static readonly Regex r_parseVersion = new Regex(@"^git version ", RegexOptions.Compiled);
         public static string ParseVersion(string versionString)
         {
@@ -48,32 +45,29 @@ namespace corgit
             return null;
         }
 
-        public static IEnumerable<GitCommit> ParseLog(string log)
+        public static List<GitCommit> ParseLog(string log)
         {
-            int index = 0;
-            while (index < log.Length)
+            const string Separator = "\x00\x00";
+
+            var s = log.AsSpan();
+            var cs = Separator.AsSpan();
+
+            var commits = new List<GitCommit>();
+            while(!s.IsEmpty)
             {
-                var nextIndex = log.IndexOf(CommitSeparator, index);
-                if (nextIndex == -1)
-                {
-                    nextIndex = log.Length;
-                }
+                var nextIndex = s.IndexOf(cs);
+                if (nextIndex == -1) nextIndex = s.Length;
 
-                var entry = log.Substring(index, nextIndex - index);
-                if (entry.StartsWith("\n"))
-                {
-                    entry = entry.Substring(1);
-                }
+                var entry = s.Slice(0, nextIndex).TrimStart('\n');
 
-                var commit = ParseCommit(entry);
-                if (commit == null)
-                {
-                    break;
-                }
+                var commit = ParseCommit(entry.ToString());
+                if (commit == null) break; //maybe throw?
 
-                yield return commit;
-                index = nextIndex + CommitSeparator.Length;
+                commits.Add(commit);
+                s = s.Slice(nextIndex + cs.Length);
             }
+
+            return commits;
         }
 
         private static readonly Regex r_parseCommit = new Regex(@"^([0-9a-f]{40})\n(.*)\n(.*)\n([\s\S]*)$", RegexOptions.Multiline | RegexOptions.Compiled);

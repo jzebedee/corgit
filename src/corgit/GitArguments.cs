@@ -73,6 +73,9 @@ namespace corgit
         }
         public static IEnumerable<string> Log(LogOptions options = default)
         {
+            const string CommitFormat = "%H\n%ae\n%P\n%B";
+            const string Separator = "%x00%x00";
+
             yield return "log";
 
             if (options.MaxEntries.HasValue)
@@ -80,7 +83,7 @@ namespace corgit
                 yield return $"-{options.MaxEntries}";
             }
 
-            yield return $"--pretty=format:{CommitFormat}{CommitSeparator}";
+            yield return $"--pretty=format:{CommitFormat}{Separator}";
         }
 
         public static IEnumerable<string> Add(IEnumerable<string> paths = null)
