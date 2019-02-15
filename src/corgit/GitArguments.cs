@@ -110,6 +110,7 @@ namespace corgit
 
         public static IEnumerable<string> Status()
         {
+            yield return "--no-optional-locks";
             yield return "status";
             yield return "-z";
             yield return "-u";
