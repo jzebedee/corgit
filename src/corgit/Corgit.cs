@@ -120,8 +120,8 @@ namespace corgit
         public async Task<IEnumerable<GitFileStatus>> StatusAsync()
             => GitParsing.ParseStatus((await RunGitAsync(GitArguments.Status())).Output);
 
-        public async Task<ExecutionResult> InitAsync()
-            => await RunGitAsync(GitArguments.Init());
+        public Task<ExecutionResult> InitAsync()
+            => RunGitAsync(GitArguments.Init());
 
         public async Task<IEnumerable<GitCommit>> LogAsync(GitArguments.LogOptions options = default)
         {
@@ -136,22 +136,22 @@ namespace corgit
             }
         }
 
-        public async Task<ExecutionResult> CommitAsync(string message = "", GitArguments.CommitOptions options = default)
-            => await RunGitAsync(GitArguments.Commit(options), message);
+        public Task<ExecutionResult> CommitAsync(string message = "", GitArguments.CommitOptions options = default)
+            => RunGitAsync(GitArguments.Commit(options), message);
 
-        public async Task<ExecutionResult> AddAsync(IEnumerable<string> paths)
-            => await RunGitAsync(GitArguments.Add(paths));
+        public Task<ExecutionResult> AddAsync(IEnumerable<string> paths)
+            => RunGitAsync(GitArguments.Add(paths));
 
         public Task<ExecutionResult> AddAsync(params string[] paths)
             => AddAsync(paths.AsEnumerable());
 
-        public async Task<ExecutionResult> RemoveAsync(IEnumerable<string> paths)
-            => await RunGitAsync(GitArguments.Remove(paths));
+        public Task<ExecutionResult> RemoveAsync(IEnumerable<string> paths)
+            => RunGitAsync(GitArguments.Remove(paths));
 
         public Task<ExecutionResult> RemoveAsync(params string[] paths)
             => RemoveAsync(paths.AsEnumerable());
 
-        public async Task<ExecutionResult> ConfigAsync(string key, string value = null, string scope = null)
-            => await RunGitAsync(GitArguments.Config(key, value, scope));
+        public Task<ExecutionResult> ConfigAsync(string key, string value = null, string scope = null)
+            => RunGitAsync(GitArguments.Config(key, value, scope));
     }
 }
