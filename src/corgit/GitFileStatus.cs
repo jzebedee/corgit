@@ -40,7 +40,7 @@ namespace corgit
         }
 
         public override string ToString()
-            => (((GitChangeType X, GitChangeType Y, string Path, string OriginalPath))this).ToString();
+            => $"{(char)X}{(char)Y} {(!string.IsNullOrEmpty(OriginalPath) ? $"{OriginalPath} -> {Path}" : Path)}";
 
         public void Deconstruct(out GitChangeType x, out GitChangeType y, out string path, out string originalPath)
         {

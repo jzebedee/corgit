@@ -62,5 +62,29 @@ namespace corgit.tests
             var results = GitParsing.ParseStatus(status);
             Assert.Equal(expected, results);
         }
+
+        [Fact]
+        public void FileStatusLooksLikePorcelain()
+        {
+            const string status = "A  newfile.txt\0"
+                                  + "R  oldfile.txt\0renamedfile.txt\0"
+                                  + "D  deletedfile.txt\0"
+                                  + "?? untrackedfile.txt\0";
+
+            var expected = new List<GitFileStatus>()
+            {
+                (GitChangeType.Added, GitChangeType.Unmodified, Path: "newfile.txt", OriginalPath: null),
+                (GitChangeType.Renamed, GitChangeType.Unmodified, Path: "renamedfile.txt", OriginalPath: "oldfile.txt"),
+                (GitChangeType.Deleted, GitChangeType.Unmodified, Path: "deletedfile.txt", OriginalPath: null),
+                (GitChangeType.Untracked, GitChangeType.Untracked, Path: "untrackedfile.txt", OriginalPath: null),
+            };
+            var results = GitParsing.ParseStatus(status).ToList();
+            Assert.Equal(expected, results);
+
+            Assert.Equal("A  newfile.txt", results[0].ToString());
+            Assert.Equal("R  oldfile.txt -> renamedfile.txt", results[1].ToString());
+            Assert.Equal("D  deletedfile.txt", results[2].ToString());
+            Assert.Equal("?? untrackedfile.txt", results[3].ToString());
+        }
     }
 }
