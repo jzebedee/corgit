@@ -89,61 +89,61 @@ namespace corgit
             return new GitCommit(match.Groups[1].Value, match.Groups[4].Value, parents, match.Groups[2].Value);
         }
 
-        public List<GitFileStatus> ParseStatus(string status)
+        public ReadOnlySpan<char> ParseStatusEntry(ReadOnlySpan<char> entry, out GitFileStatus fileStatus)
         {
-            ReadOnlySpan<char> ParseEntry(ReadOnlySpan<char> entry, out GitFileStatus fileStatus)
+            fileStatus = default;
+            if (entry.Length <= 4)
             {
-                fileStatus = default;
-                if (entry.Length <= 4)
-                {
-                    return null;
-                }
-
-                string Rename = null;
-                string Path;
-                char X = entry[0];
-                char Y = entry[1];
-                //space = entry[2]
-                entry = entry.Slice(3); //X + Y + space
-
-                int lastIndex;
-                switch (X)
-                {
-                    case 'R':
-                    case 'C':
-                        lastIndex = entry.IndexOf('\0');
-                        if (lastIndex == -1)
-                        {
-                            return null;
-                        }
-
-                        Rename = entry.Slice(0, lastIndex).ToString();
-                        entry = entry.Slice(lastIndex + 1);
-                        break;
-                }
-
-                lastIndex = entry.IndexOf('\0');
-                if (lastIndex == -1)
-                {
-                    return null;
-                }
-
-                Path = entry.Slice(0, lastIndex).ToString();
-
-                //from: git.ts
-                // If path ends with slash, it must be a nested git repo
-                if (entry[lastIndex - 1] != '/')
-                {
-                    fileStatus = (X, Y, Rename, Path);
-                }
-
-                return entry.Slice(lastIndex + 1);
+                return null;
             }
 
+            var X = (GitChangeType)entry[0];
+            var Y = (GitChangeType)entry[1];
+            //space = entry[2]
+            string Path;
+            string OriginalPath = null;
+            entry = entry.Slice(3); //X + Y + space
+
+            int lastIndex;
+            switch (X)
+            {
+                case GitChangeType.Renamed:
+                case GitChangeType.Copied:
+                    lastIndex = entry.IndexOf('\0');
+                    if (lastIndex == -1)
+                    {
+                        return null;
+                    }
+
+                    OriginalPath = entry.Slice(0, lastIndex).ToString();
+                    entry = entry.Slice(lastIndex + 1);
+                    break;
+            }
+
+            lastIndex = entry.IndexOf('\0');
+            if (lastIndex == -1)
+            {
+                return null;
+            }
+
+            Path = entry.Slice(0, lastIndex).ToString();
+
+            //from git.ts
+            // If path ends with slash, it must be a nested git repo
+            if (entry[lastIndex - 1] != '/')
+            {
+                fileStatus = (X: X, Y: Y, Path: Path, OriginalPath: OriginalPath);
+            }
+
+            return entry.Slice(lastIndex + 1);
+        }
+
+        public IEnumerable<GitFileStatus> ParseStatus(string status)
+        {
             var parsed = new List<GitFileStatus>();
 
             ReadOnlySpan<char> s = status.AsSpan();
-            while ((s = ParseEntry(s, out GitFileStatus fileStatus)) != null)
+            while ((s = ParseStatusEntry(s, out GitFileStatus fileStatus)) != null)
                 parsed.Add(fileStatus);
 
             return parsed;
