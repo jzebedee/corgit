@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace corgit
 {
-    public partial class Git
+    public class GitParsing
     {
         internal const string CommitFormat = "%H\n%ae\n%P\n%B";
         internal const string CommitSeparator = "\x00\x00";
