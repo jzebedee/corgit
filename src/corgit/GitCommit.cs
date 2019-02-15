@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace corgit
 {
@@ -12,6 +11,9 @@ namespace corgit
                          string[] parents,
                          string authorEmail)
         {
+            if (hash?.Length != 40)
+                throw new ArgumentException("Invalid SHA1 hash", nameof(hash));
+
             this.Hash = hash;
             this.Message = message;
             this.Parents = parents;
@@ -22,6 +24,15 @@ namespace corgit
         public string Message { get; }
         public string[] Parents { get; }
         public string AuthorEmail { get; }
+
+        public string Subject
+        {
+            get
+            {
+                var end = Message.IndexOf('\n');
+                return Message.Substring(0, end == -1 ? Message.Length : end);
+            }
+        }
 
         public override bool Equals(object obj)
             => obj is GitCommit commit && Equals(commit);
@@ -44,7 +55,7 @@ namespace corgit
         }
 
         public override string ToString()
-            => (Hash, Message, Parents, AuthorEmail).ToString();
+            => $"{Hash} {Subject}";
 
         public static bool operator ==(GitCommit left, GitCommit right)
             => EqualityComparer<GitCommit>.Default.Equals(left, right);
