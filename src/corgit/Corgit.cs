@@ -120,8 +120,11 @@ namespace corgit
         }
 
         private static readonly Dictionary<string, string> StatusOptions = new Dictionary<string, string> { { "GIT_OPTIONAL_LOCKS", "0" } };
-        public async Task<ExecutionResult> StatusAsync()
-            => await RunGitAsync(GitArguments.Status(), env: StatusOptions);
+        public async Task<IEnumerable<GitFileStatus>> StatusAsync()
+        {
+            var result = await RunGitAsync(GitArguments.Status(), env: StatusOptions);
+            return _git.ParseStatus(result.Output);
+        }
 
         public async Task<ExecutionResult> InitAsync()
             => await RunGitAsync(GitArguments.Init());
