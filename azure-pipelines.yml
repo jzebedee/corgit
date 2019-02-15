@@ -17,10 +17,14 @@ steps:
     arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
 - script: |
     dotnet pack    src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY/package --version-suffix 'CI-$(Build.BuildNumber)'
-    dotnet publish src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY
+    dotnet publish src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY/pub
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: $(Build.ArtifactStagingDirectory)
+    pathtoPublish: $(Build.ArtifactStagingDirectory)/package
+    ArtifactName: 'package'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: $(Build.ArtifactStagingDirectory)/pub
     ArtifactName: 'pub'
 - task: NuGetCommand@2
   inputs:
