@@ -10,7 +10,7 @@ steps:
   inputs:
     version: 2.2.100
 - script: |
-    dotnet build   src/corgit --configuration $(buildConfiguration)             --output $BUILD_BINARIESDIRECTORY
+    dotnet build   src/corgit --configuration $(buildConfiguration)             --output $(Build.BinariesDirectory)
   displayName: 'dotnet build $(buildConfiguration)'
 - task: DotNetCoreCLI@2
   inputs:
@@ -18,8 +18,8 @@ steps:
     projects: '**/*tests/*.csproj'
     arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
 - script: |
-    dotnet pack    src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY/package-rc
-    dotnet publish src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY/pub
+    dotnet pack    src/corgit --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/package-rc
+    dotnet publish src/corgit --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/pub
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: $(Build.ArtifactStagingDirectory)/package-rc
