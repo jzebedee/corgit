@@ -12,18 +12,18 @@ steps:
   displayName: 'Use .NET Core SDK Tool Installer'
   inputs:
     version: 2.2.100
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
 - script: |
-    dotnet build   src/corgit --configuration $(buildConfiguration)            --output $BUILD_BINARIESDIRECTORY
+    dotnet build   src/corgit --configuration $(buildConfiguration)            --output $(Build.BinariesDirectory)
+  displayName: 'dotnet build $(buildConfiguration)'
 - task: DotNetCoreCLI@2
   inputs:
     command: test
     projects: '**/*tests/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+    arguments: '--configuration $(buildConfiguration)'
+    displayName: 'dotnet test $(buildConfiguration)'
 - script: |
-    dotnet pack    src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY/package --version-suffix 'CI-$(Build.BuildNumber)'
-    dotnet publish src/corgit --configuration $(buildConfiguration) --no-build --output $BUILD_ARTIFACTSTAGINGDIRECTORY/pub
+    dotnet pack    src/corgit --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/package --version-suffix 'CI-$(Build.BuildNumber)'
+    dotnet publish src/corgit --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/pub
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: $(Build.ArtifactStagingDirectory)/package
