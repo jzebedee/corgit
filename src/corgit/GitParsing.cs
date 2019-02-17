@@ -31,6 +31,12 @@ namespace corgit
             //template:
             //{new Regex(@"", RegexOptions.Compiled), GitErrorCode. },
         };
+
+        public static object ParseCountObjects(string countObjects)
+        {
+            throw new NotImplementedException();
+        }
+
         public static GitErrorCode? ParseErrorCode(string gitError)
         {
             foreach (var kvp in _gitErrorRegexes)
