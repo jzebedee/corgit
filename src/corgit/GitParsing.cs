@@ -33,37 +33,32 @@ namespace corgit
             //{new Regex(@"", RegexOptions.Compiled), GitErrorCode. },
         };
 
-        private static readonly Regex r_parseCountObjects = new Regex(@"(\d+) objects, (\d+) kilobytes", RegexOptions.Compiled);
         public static GitObjectCount ParseCountObjects(string countObjects)
         {
             if (string.IsNullOrWhiteSpace(countObjects))
                 return null;
-
-            if (countObjects.IndexOf('\n') == -1)
-            {
-                var match = r_parseCountObjects.Match(countObjects);
-                if (!match.Success)
-                    throw new InvalidOperationException("Could not parse object count");
-
-                return new GitObjectCount(count: int.Parse(match.Groups[0].Value),
-                                          size: long.Parse(match.Groups[1].Value));
-            }
 
             var dict = countObjects.Split('\n')
                 .Where(l => !string.IsNullOrEmpty(l))
                 .Select(l => l.Split(':'))
                 .ToDictionary(f => f[0], f => f[1].Trim());
 
+            dict.TryGetValue("in-pack", out string inPack);
+            dict.TryGetValue("packs", out string packs);
+            dict.TryGetValue("size-pack", out string packSize);
+            dict.TryGetValue("prune-packable", out string prunePackable);
+            dict.TryGetValue("garbage", out string garbage);
+            dict.TryGetValue("size-garbage", out string garbageSize);
             return new GitObjectCount
             (
                 count: int.Parse(dict["count"]),
                 size: long.Parse(dict["size"]),
-                inPack: int.Parse(dict["in-pack"]),
-                packs: int.Parse(dict["packs"]),
-                packSize: long.Parse(dict["size-pack"]),
-                prunePackable: int.Parse(dict["prune-packable"]),
-                garbage: int.Parse(dict["garbage"]),
-                garbageSize: long.Parse(dict["size-garbage"])
+                inPack: inPack != null ? int.Parse(inPack) : default(int?),
+                packs: packs != null ? int.Parse(packs) : default(int?),
+                packSize: packSize != null ? long.Parse(packSize) : default(long?),
+                prunePackable: prunePackable != null ? int.Parse(prunePackable) : default(int?),
+                garbage: garbage != null ? int.Parse(garbage) : default(int?),
+                garbageSize: garbageSize != null ? long.Parse(garbageSize) : default(long?)
             );
         }
 
