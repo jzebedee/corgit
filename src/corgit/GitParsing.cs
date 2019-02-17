@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace corgit
@@ -31,6 +32,36 @@ namespace corgit
             //template:
             //{new Regex(@"", RegexOptions.Compiled), GitErrorCode. },
         };
+
+        public static GitObjectCount ParseCountObjects(string countObjects)
+        {
+            if (string.IsNullOrWhiteSpace(countObjects))
+                return null;
+
+            var dict = countObjects.Split('\n')
+                .Where(l => !string.IsNullOrEmpty(l))
+                .Select(l => l.Split(':'))
+                .ToDictionary(f => f[0], f => f[1].Trim());
+
+            dict.TryGetValue("in-pack", out string inPack);
+            dict.TryGetValue("packs", out string packs);
+            dict.TryGetValue("size-pack", out string packSize);
+            dict.TryGetValue("prune-packable", out string prunePackable);
+            dict.TryGetValue("garbage", out string garbage);
+            dict.TryGetValue("size-garbage", out string garbageSize);
+            return new GitObjectCount
+            (
+                count: int.Parse(dict["count"]),
+                size: long.Parse(dict["size"]),
+                inPack: inPack != null ? int.Parse(inPack) : default(int?),
+                packs: packs != null ? int.Parse(packs) : default(int?),
+                packSize: packSize != null ? long.Parse(packSize) : default(long?),
+                prunePackable: prunePackable != null ? int.Parse(prunePackable) : default(int?),
+                garbage: garbage != null ? int.Parse(garbage) : default(int?),
+                garbageSize: garbageSize != null ? long.Parse(garbageSize) : default(long?)
+            );
+        }
+
         public static GitErrorCode? ParseErrorCode(string gitError)
         {
             foreach (var kvp in _gitErrorRegexes)
@@ -53,7 +84,7 @@ namespace corgit
             var cs = Separator.AsSpan();
 
             var commits = new List<GitCommit>();
-            while(!s.IsEmpty)
+            while (!s.IsEmpty)
             {
                 var nextIndex = s.IndexOf(cs);
                 if (nextIndex == -1) nextIndex = s.Length;

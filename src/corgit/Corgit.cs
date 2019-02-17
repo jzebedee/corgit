@@ -153,5 +153,8 @@ namespace corgit
 
         public Task<ExecutionResult> ConfigAsync(string key, string value = null, string scope = null)
             => RunGitAsync(GitArguments.Config(key, value, scope));
+
+        public async Task<GitObjectCount> CountObjectsAsync()
+            => GitParsing.ParseCountObjects((await RunGitAsync(GitArguments.CountObjects())).Output);
     }
 }

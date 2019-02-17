@@ -133,5 +133,11 @@ namespace corgit
         {
             yield return "init";
         }
+
+        public static IEnumerable<string> CountObjects()
+        {
+            yield return "count-objects";
+            yield return "-v";
+        }
     }
 }
