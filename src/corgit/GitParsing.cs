@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace corgit
 {
-    public static partial class GitParsing
+    public static class GitParsing
     {
         private static readonly Regex r_parseVersion = new Regex(@"^git version ", RegexOptions.Compiled);
         public static string ParseVersion(string versionString)
