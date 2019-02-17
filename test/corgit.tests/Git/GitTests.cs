@@ -15,12 +15,71 @@ namespace corgit.tests
         }
 
         [Fact]
-        public void ParseCountObjects()
+        public void ParseCountObjectsEmpty()
         {
             const string countObjects = "";
 
             var result = GitParsing.ParseCountObjects(countObjects);
-            Assert.Equal(null, countObjects);
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void ParseCountObjects()
+        {
+            const string countObjects = @"count: 123
+size: 1099511627776
+in-pack: 1
+packs: 2
+size-pack: 4398046511104
+prune-packable: 3
+garbage: 4
+size-garbage: 2199023255552
+";
+
+            var expected = new GitObjectCount(count: 123, size: 1099511627776, inPack: 1, packs: 2,
+                                              packSize: 4398046511104, prunePackable: 3, garbage: 4,
+                                              garbageSize: 2199023255552);
+            var result = GitParsing.ParseCountObjects(countObjects);
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void ParseCountObjectsUnknownFields()
+        {
+            const string countObjects = @"count: 123
+size: 1099511627776
+in-pack: 1
+packs: 2
+size-pack: 4398046511104
+prune-packable: 3
+garbage: 4
+size-garbage: 2199023255552
+future-value: 99
+weird: hello
+";
+
+            var expected = new GitObjectCount(count: 123, size: 1099511627776, inPack: 1, packs: 2,
+                                              packSize: 4398046511104, prunePackable: 3, garbage: 4,
+                                              garbageSize: 2199023255552);
+            var result = GitParsing.ParseCountObjects(countObjects);
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void ParseCountObjectsMissingFields()
+        {
+            const string countObjects = @"count: 123
+size: 1099511627776
+in-pack: 1
+garbage: 4
+size-garbage: 2199023255552
+";
+
+            var expected = new GitObjectCount(count: 123, size: 1099511627776, inPack: 1, packs: 2,
+                                              packSize: 4398046511104, prunePackable: 3, garbage: 4,
+                                              garbageSize: 2199023255552);
+            var result = GitParsing.ParseCountObjects(countObjects);
+            Assert.Equal(expected, result);
         }
     }
 }

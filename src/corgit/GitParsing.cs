@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace corgit
 {
-    public static class GitParsing
+    public static partial class GitParsing
     {
         private static readonly Regex r_parseVersion = new Regex(@"^git version ", RegexOptions.Compiled);
         public static string ParseVersion(string versionString)
@@ -32,9 +33,38 @@ namespace corgit
             //{new Regex(@"", RegexOptions.Compiled), GitErrorCode. },
         };
 
-        public static object ParseCountObjects(string countObjects)
+        private static readonly Regex r_parseCountObjects = new Regex(@"(\d+) objects, (\d+) kilobytes", RegexOptions.Compiled);
+        public static GitObjectCount ParseCountObjects(string countObjects)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(countObjects))
+                return null;
+
+            if (countObjects.IndexOf('\n') == -1)
+            {
+                var match = r_parseCountObjects.Match(countObjects);
+                if (!match.Success)
+                    throw new InvalidOperationException("Could not parse object count");
+
+                return new GitObjectCount(count: int.Parse(match.Groups[0].Value),
+                                          size: long.Parse(match.Groups[1].Value));
+            }
+
+            var dict = countObjects.Split('\n')
+                .Where(l => !string.IsNullOrEmpty(l))
+                .Select(l => l.Split(':'))
+                .ToDictionary(f => f[0], f => f[1].Trim());
+
+            return new GitObjectCount
+            (
+                count: int.Parse(dict["count"]),
+                size: long.Parse(dict["size"]),
+                inPack: int.Parse(dict["in-pack"]),
+                packs: int.Parse(dict["packs"]),
+                packSize: long.Parse(dict["size-pack"]),
+                prunePackable: int.Parse(dict["prune-packable"]),
+                garbage: int.Parse(dict["garbage"]),
+                garbageSize: long.Parse(dict["size-garbage"])
+            );
         }
 
         public static GitErrorCode? ParseErrorCode(string gitError)
@@ -59,7 +89,7 @@ namespace corgit
             var cs = Separator.AsSpan();
 
             var commits = new List<GitCommit>();
-            while(!s.IsEmpty)
+            while (!s.IsEmpty)
             {
                 var nextIndex = s.IndexOf(cs);
                 if (nextIndex == -1) nextIndex = s.Length;
