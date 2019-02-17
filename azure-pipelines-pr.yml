@@ -1,0 +1,20 @@
+pool:
+  vmImage: 'Ubuntu 16.04'
+  
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: DotNetCoreInstaller@0
+  displayName: 'Use .NET Core SDK Tool Installer'
+  inputs:
+    version: 2.2.100
+- script: |
+    dotnet build   src/corgit --configuration $(buildConfiguration)            --output $(Build.BinariesDirectory)
+  displayName: 'dotnet build $(buildConfiguration)'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    projects: '**/*tests/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+    displayName: 'dotnet test $(buildConfiguration)'
