@@ -139,5 +139,11 @@ namespace corgit
             yield return "count-objects";
             yield return "-v";
         }
+
+        public static IEnumerable<string> ArchiveFormatList()
+        {
+            yield return "archive";
+            yield return "--list";
+        }
     }
 }
