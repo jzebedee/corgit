@@ -156,11 +156,11 @@ namespace corgit
             public readonly string Remote;
             public readonly string Exec;
 
-            public readonly string Path;
+            public readonly IEnumerable<string> Paths;
 
             public ArchiveOptions(string format = null, string prefix = null, bool? worktreeAttributes = null,
                                   IEnumerable<string> extra = null, string remote = null, string exec = null,
-                                  string path = null)
+                                  IEnumerable<string> paths = null)
             {
                 Format = format;
                 Prefix = prefix;
@@ -168,7 +168,7 @@ namespace corgit
                 Extra = extra;
                 Remote = remote;
                 Exec = exec;
-                Path = path;
+                Paths = paths;
             }
         }
         public static IEnumerable<string> Archive(string treeish, string output, ArchiveOptions options = default)
@@ -198,9 +198,12 @@ namespace corgit
                 yield return "--worktree-attributes";
             }
 
-            foreach (var extraArg in (options.Extra ?? Enumerable.Empty<string>()))
+            if (options.Extra != null)
             {
-                yield return $"-{extraArg}";
+                foreach (var extraArg in options.Extra)
+                {
+                    yield return $"-{extraArg}";
+                }
             }
 
             if (!string.IsNullOrEmpty(options.Remote))
@@ -215,9 +218,13 @@ namespace corgit
 
             yield return treeish;
 
-            if (!string.IsNullOrEmpty(options.Path))
+            if (options.Paths != null)
             {
-                yield return options.Path;
+                yield return "--";
+                foreach (var path in options.Paths)
+                {
+                    yield return path;
+                }
             }
         }
     }
