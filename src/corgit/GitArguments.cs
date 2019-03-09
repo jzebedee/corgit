@@ -145,5 +145,80 @@ namespace corgit
             yield return "archive";
             yield return "--list";
         }
+
+        public struct ArchiveOptions
+        {
+            public readonly string Format;
+            public readonly string Prefix;
+            public readonly bool? WorktreeAttributes;
+            public readonly IEnumerable<string> Extra;
+
+            public readonly string Remote;
+            public readonly string Exec;
+
+            public readonly string Path;
+
+            public ArchiveOptions(string format = null, string prefix = null, bool? worktreeAttributes = null,
+                                  IEnumerable<string> extra = null, string remote = null, string exec = null,
+                                  string path = null)
+            {
+                Format = format;
+                Prefix = prefix;
+                WorktreeAttributes = worktreeAttributes;
+                Extra = extra;
+                Remote = remote;
+                Exec = exec;
+                Path = path;
+            }
+        }
+        public static IEnumerable<string> Archive(string treeish, string output, ArchiveOptions options = default)
+        {
+            if (string.IsNullOrWhiteSpace(treeish))
+                throw new ArgumentNullException(nameof(treeish));
+
+            if (string.IsNullOrWhiteSpace(output))
+                throw new ArgumentNullException(nameof(output));
+
+            yield return "archive";
+
+            if (!string.IsNullOrEmpty(options.Format))
+            {
+                yield return $"--format={options.Format}";
+            }
+
+            if (!string.IsNullOrEmpty(options.Prefix))
+            {
+                yield return $"--prefix={options.Prefix}";
+            }
+
+            yield return $"--output={output}";
+
+            if (options.WorktreeAttributes.GetValueOrDefault())
+            {
+                yield return "--worktree-attributes";
+            }
+
+            foreach (var extraArg in (options.Extra ?? Enumerable.Empty<string>()))
+            {
+                yield return $"-{extraArg}";
+            }
+
+            if (!string.IsNullOrEmpty(options.Remote))
+            {
+                yield return $"--remote={options.Remote}";
+            }
+
+            if (!string.IsNullOrEmpty(options.Exec))
+            {
+                yield return $"--exec={options.Exec}";
+            }
+
+            yield return treeish;
+
+            if (!string.IsNullOrEmpty(options.Path))
+            {
+                yield return options.Path;
+            }
+        }
     }
 }
