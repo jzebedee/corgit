@@ -7,6 +7,9 @@ namespace corgit
 {
     public static class GitArguments
     {
+        private static string QuoteEscape(string value)
+            => value.AsSpan().IndexOfAny(' ', '"') >= 0 ? $"\"{value.Replace("\"", "\\\"")}\"" : value;
+
         public struct CommitOptions
         {
             public readonly bool? All;
@@ -94,7 +97,7 @@ namespace corgit
             if (paths != null)
             {
                 yield return "--";
-                foreach (var path in paths)
+                foreach (var path in paths.Select(QuoteEscape))
                 {
                     yield return path;
                 }
@@ -111,7 +114,7 @@ namespace corgit
             else
             {
                 yield return "--";
-                foreach (var path in paths)
+                foreach (var path in paths.Select(QuoteEscape))
                 {
                     yield return path;
                 }
@@ -125,7 +128,7 @@ namespace corgit
 
             yield return "rm";
             yield return "--";
-            foreach (var path in paths)
+            foreach (var path in paths.Select(QuoteEscape))
             {
                 yield return path;
             }
@@ -141,7 +144,7 @@ namespace corgit
             yield return key;
             if (!string.IsNullOrEmpty(value))
             {
-                yield return value;
+                yield return QuoteEscape(value);
             }
         }
 
@@ -172,7 +175,7 @@ namespace corgit
             if (paths != null)
             {
                 yield return "--";
-                foreach (var path in paths)
+                foreach (var path in paths.Select(QuoteEscape))
                 {
                     yield return path;
                 }
@@ -255,15 +258,15 @@ namespace corgit
 
             if (!string.IsNullOrEmpty(options.Format))
             {
-                yield return $"--format={options.Format}";
+                yield return $"--format={QuoteEscape(options.Format)}";
             }
 
             if (!string.IsNullOrEmpty(options.Prefix))
             {
-                yield return $"--prefix={options.Prefix}";
+                yield return $"--prefix={QuoteEscape(options.Prefix)}";
             }
 
-            yield return $"--output={output}";
+            yield return $"--output={QuoteEscape(output)}";
 
             if (options.WorktreeAttributes.GetValueOrDefault())
             {
@@ -280,12 +283,12 @@ namespace corgit
 
             if (!string.IsNullOrEmpty(options.Remote))
             {
-                yield return $"--remote={options.Remote}";
+                yield return $"--remote={QuoteEscape(options.Remote)}";
             }
 
             if (!string.IsNullOrEmpty(options.Exec))
             {
-                yield return $"--exec={options.Exec}";
+                yield return $"--exec={QuoteEscape(options.Exec)}";
             }
 
             yield return treeish;
@@ -293,7 +296,7 @@ namespace corgit
             if (options.Paths != null)
             {
                 yield return "--";
-                foreach (var path in options.Paths)
+                foreach (var path in options.Paths.Select(QuoteEscape))
                 {
                     yield return path;
                 }
