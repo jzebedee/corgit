@@ -2,16 +2,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <VersionPrefix>0.1</VersionPrefix>
+    <VersionPrefix>0.2</VersionPrefix>
     <Authors>jzebedee</Authors>
     <PackageProjectUrl>https://github.com/jzebedee/corgit</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/jzebedee/corgit/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/jzebedee/corgit</RepositoryUrl>
     <PackageTags>git corgit mingit git-for-windows libgit libgit2 libgit2sharp git.net git# gitsharp source-control scm</PackageTags>
-    <Description>Minimal .NET Standard wrapper library to run and parse output from the git command-line utility.
-
-Written in C#
-MIT Licensed</Description>
+    <Description>Minimal .NET Standard wrapper library to run and parse output from the git command-line utility</Description>
 
     <!-- Required by Sonarcloud -->
     <ProjectGuid>{35650b20-07fa-458b-bcc0-6ffbf185938a}</ProjectGuid>

@@ -13,7 +13,7 @@ namespace corgit
         private readonly string _gitPath;
         private readonly string _workingDirectory;
 
-        private Process CreateGitProcess(string arguments = "", IEnumerable<KeyValuePair<string, string>> env = null)
+        private Process CreateGitProcess(string arguments = "", IReadOnlyDictionary<string, string> env = null)
         {
             var proc = new Process()
             {
@@ -87,7 +87,7 @@ namespace corgit
 
         public async Task<ExecutionResult> RunGitAsync(string arguments = "",
                                                        string stdin = null,
-                                                       IEnumerable<KeyValuePair<string, string>> env = null)
+                                                       IReadOnlyDictionary<string, string> env = null)
         {
             using (var proc = CreateGitProcess(arguments, env))
             {
@@ -108,7 +108,7 @@ namespace corgit
 
         public Task<ExecutionResult> RunGitAsync(IEnumerable<string> arguments,
                                                 string stdin = null,
-                                                IEnumerable<KeyValuePair<string, string>> env = null)
+                                                IReadOnlyDictionary<string, string> env = null)
            => RunGitAsync(string.Join(" ", arguments), stdin, env);
 
         public Corgit(string gitPath, string workingDirectory)
