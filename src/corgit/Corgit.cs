@@ -142,6 +142,9 @@ namespace corgit
         public Task<ExecutionResult> CommitAsync(string message = "", GitArguments.CommitOptions options = default)
             => RunGitAsync(GitArguments.Commit(options), message);
 
+        public Task<ExecutionResult> CheckoutAsync(string treeish, IEnumerable<string> paths = null, GitArguments.CheckoutOptions options = default)
+            => RunGitAsync(GitArguments.Checkout(treeish, paths, options));
+
         public Task<ExecutionResult> AddAsync(IEnumerable<string> paths)
             => RunGitAsync(GitArguments.Add(paths));
 
