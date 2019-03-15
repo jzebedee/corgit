@@ -89,11 +89,17 @@ namespace corgit
         public static IEnumerable<string> Add(IEnumerable<string> paths = null)
         {
             yield return "add";
-            yield return "-A";
-            yield return "--";
-            foreach (var path in (paths ?? Enumerable.Empty<string>()).DefaultIfEmpty("."))
+            if (paths == null)
             {
-                yield return path;
+                yield return "--all";
+            }
+            else
+            {
+                yield return "--";
+                foreach (var path in paths)
+                {
+                    yield return path;
+                }
             }
         }
 
