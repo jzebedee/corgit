@@ -99,9 +99,12 @@ namespace corgit
 
         public static IEnumerable<string> Remove(IEnumerable<string> paths)
         {
+            if (paths == null)
+                throw new ArgumentNullException(nameof(paths));
+
             yield return "rm";
             yield return "--";
-            foreach (var path in (paths ?? Enumerable.Empty<string>()))
+            foreach (var path in paths)
             {
                 yield return path;
             }
