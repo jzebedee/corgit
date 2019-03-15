@@ -107,7 +107,7 @@ namespace corgit
             return commits;
         }
 
-        private static readonly Regex r_parseCommit = new Regex(@"^([0-9a-f]{40})\n(.*)\n(.*)\n([\s\S]*)$", RegexOptions.Multiline | RegexOptions.Compiled);
+        private static readonly Regex r_parseCommit = new Regex(@"^([0-9a-f]{40})\n(\d+)\n(.*)\n(.*)\n([\s\S]*)$", RegexOptions.Multiline | RegexOptions.Compiled);
         public static GitCommit ParseCommit(string commit)
         {
             var match = r_parseCommit.Match(commit.Trim());
@@ -116,8 +116,25 @@ namespace corgit
                 return null;
             }
 
-            var parents = (match.Groups[3].Success && !string.IsNullOrEmpty(match.Groups[3].Value)) ? match.Groups[3].Value.Split(' ') : null;
-            return new GitCommit(match.Groups[1].Value, match.Groups[4].Value, parents, match.Groups[2].Value);
+            var hash = match.Groups[1].Value;
+
+            DateTimeOffset authorDate;
+            {
+                var unixTimeGroup = match.Groups[2].Value;
+                authorDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(unixTimeGroup));
+            }
+
+            var authorEmail = match.Groups[3].Value;
+
+            string[] parents;
+            {
+                var parentGroup = match.Groups[4];
+                parents = (parentGroup.Success && !string.IsNullOrEmpty(parentGroup.Value)) ? parentGroup.Value.Split(' ') : null;
+            }
+
+            var message = match.Groups[5].Value;
+
+            return new GitCommit(hash, message, parents, authorEmail, authorDate);
         }
 
         public static ReadOnlySpan<char> ParseStatusEntry(ReadOnlySpan<char> entry, out GitFileStatus fileStatus)
