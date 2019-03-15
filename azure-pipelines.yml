@@ -32,9 +32,3 @@ steps:
   inputs:
     pathtoPublish: $(Build.ArtifactStagingDirectory)/pub
     ArtifactName: 'pub'
-- task: NuGetCommand@2
-  inputs:
-    command: push
-    nuGetFeedType: external
-    publishFeedCredentials: 'corgit nuget.org'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/package/*.nupkg'
