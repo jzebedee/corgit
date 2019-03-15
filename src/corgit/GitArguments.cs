@@ -65,25 +65,40 @@ namespace corgit
         public struct LogOptions
         {
             public readonly int? MaxEntries;
+            public readonly bool Reverse;
 
-            public LogOptions(int? maxEntries = 32)
+            public LogOptions(int? maxEntries = 32, bool reverse = false)
             {
                 MaxEntries = maxEntries;
+                Reverse = reverse;
             }
         }
-        public static IEnumerable<string> Log(LogOptions options = default)
+        public static IEnumerable<string> Log(IEnumerable<string> paths = null, LogOptions options = default)
         {
             const string CommitFormat = "%H\n%ae\n%P\n%B";
             const string Separator = "%x00%x00";
 
             yield return "log";
+            yield return $"--pretty=format:{CommitFormat}{Separator}";
 
             if (options.MaxEntries.HasValue)
             {
-                yield return $"-{options.MaxEntries}";
+                yield return $"-n {options.MaxEntries}";
             }
 
-            yield return $"--pretty=format:{CommitFormat}{Separator}";
+            if (options.Reverse)
+            {
+                yield return "--reverse";
+            }
+
+            if (paths != null)
+            {
+                yield return "--";
+                foreach (var path in paths)
+                {
+                    yield return path;
+                }
+            }
         }
 
         public static IEnumerable<string> Add(IEnumerable<string> paths = null)
