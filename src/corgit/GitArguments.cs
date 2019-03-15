@@ -139,5 +139,93 @@ namespace corgit
             yield return "count-objects";
             yield return "-v";
         }
+
+        public static IEnumerable<string> ArchiveFormatList()
+        {
+            yield return "archive";
+            yield return "--list";
+        }
+
+        public struct ArchiveOptions
+        {
+            public readonly string Format;
+            public readonly string Prefix;
+            public readonly bool? WorktreeAttributes;
+            public readonly IEnumerable<string> Extra;
+
+            public readonly string Remote;
+            public readonly string Exec;
+
+            public readonly IEnumerable<string> Paths;
+
+            public ArchiveOptions(string format = null, string prefix = null, bool? worktreeAttributes = null,
+                                  IEnumerable<string> extra = null, string remote = null, string exec = null,
+                                  IEnumerable<string> paths = null)
+            {
+                Format = format;
+                Prefix = prefix;
+                WorktreeAttributes = worktreeAttributes;
+                Extra = extra;
+                Remote = remote;
+                Exec = exec;
+                Paths = paths;
+            }
+        }
+        public static IEnumerable<string> Archive(string treeish, string output, ArchiveOptions options = default)
+        {
+            if (string.IsNullOrWhiteSpace(treeish))
+                throw new ArgumentNullException(nameof(treeish));
+
+            if (string.IsNullOrWhiteSpace(output))
+                throw new ArgumentNullException(nameof(output));
+
+            yield return "archive";
+
+            if (!string.IsNullOrEmpty(options.Format))
+            {
+                yield return $"--format={options.Format}";
+            }
+
+            if (!string.IsNullOrEmpty(options.Prefix))
+            {
+                yield return $"--prefix={options.Prefix}";
+            }
+
+            yield return $"--output={output}";
+
+            if (options.WorktreeAttributes.GetValueOrDefault())
+            {
+                yield return "--worktree-attributes";
+            }
+
+            if (options.Extra != null)
+            {
+                foreach (var extraArg in options.Extra)
+                {
+                    yield return $"-{extraArg}";
+                }
+            }
+
+            if (!string.IsNullOrEmpty(options.Remote))
+            {
+                yield return $"--remote={options.Remote}";
+            }
+
+            if (!string.IsNullOrEmpty(options.Exec))
+            {
+                yield return $"--exec={options.Exec}";
+            }
+
+            yield return treeish;
+
+            if (options.Paths != null)
+            {
+                yield return "--";
+                foreach (var path in options.Paths)
+                {
+                    yield return path;
+                }
+            }
+        }
     }
 }

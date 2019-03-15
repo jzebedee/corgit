@@ -13,6 +13,12 @@ namespace corgit
             return r_parseVersion.Replace(versionString, "");
         }
 
+        public static IEnumerable<string> ParseArchiveFormatList(string archiveFormatList)
+        {
+            return (archiveFormatList?.Split('\r', '\n') ?? Enumerable.Empty<string>())
+                .Where(s => !string.IsNullOrWhiteSpace(s));
+        }
+
         private static readonly Dictionary<Regex, GitErrorCode> _gitErrorRegexes = new Dictionary<Regex, GitErrorCode>
         {
             {new Regex(@"Another git process seems to be running in this repository|If no other git process is currently running", RegexOptions.Compiled), GitErrorCode.RepositoryIsLocked },

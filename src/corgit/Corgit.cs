@@ -156,5 +156,11 @@ namespace corgit
 
         public async Task<GitObjectCount> CountObjectsAsync()
             => GitParsing.ParseCountObjects((await RunGitAsync(GitArguments.CountObjects())).Output);
+
+        public async Task<IEnumerable<string>> ArchiveFormatListAsync()
+            => GitParsing.ParseArchiveFormatList((await RunGitAsync(GitArguments.ArchiveFormatList())).Output);
+
+        public Task<ExecutionResult> ArchiveAsync(string treeish, string output, GitArguments.ArchiveOptions options = default)
+            => RunGitAsync(GitArguments.Archive(treeish, output, options));
     }
 }
