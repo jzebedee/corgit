@@ -10,11 +10,7 @@ namespace corgit.tests
         [Fact]
         public void ParseFormatList()
         {
-            const string archiveFormatList = @"tar
-tgz
-tar.gz
-zip
-";
+            const string archiveFormatList = "tar\ntgz\ntar.gz\nzip\n";
 
             var expected = new[] { "tar", "tgz", "tar.gz", "zip" };
             var actual = GitParsing.ParseArchiveFormatList(archiveFormatList);
