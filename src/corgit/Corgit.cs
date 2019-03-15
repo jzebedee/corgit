@@ -123,9 +123,12 @@ namespace corgit
         public Task<ExecutionResult> InitAsync()
             => RunGitAsync(GitArguments.Init());
 
-        public async Task<IEnumerable<GitCommit>> LogAsync(GitArguments.LogOptions options = default)
+        public Task<IEnumerable<GitCommit>> LogAsync(GitArguments.LogOptions options = default, params string[] paths)
+            => LogAsync(options: options, paths: paths.AsEnumerable());
+
+        public async Task<IEnumerable<GitCommit>> LogAsync(GitArguments.LogOptions options = default, IEnumerable<string> paths = null)
         {
-            var result = await RunGitAsync(GitArguments.Log(options));
+            var result = await RunGitAsync(GitArguments.Log(options, paths));
             if (result.ExitCode == 1)
             {
                 return Enumerable.Empty<GitCommit>();

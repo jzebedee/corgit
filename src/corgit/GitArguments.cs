@@ -73,7 +73,7 @@ namespace corgit
                 Reverse = reverse;
             }
         }
-        public static IEnumerable<string> Log(IEnumerable<string> paths = null, LogOptions options = default)
+        public static IEnumerable<string> Log(LogOptions options = default, IEnumerable<string> paths = null)
         {
             const string CommitFormat = "%H\n%ae\n%P\n%B";
             const string Separator = "%x00%x00";
