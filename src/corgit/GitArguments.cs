@@ -107,17 +107,17 @@ namespace corgit
         public static IEnumerable<string> Add(IEnumerable<string> paths = null)
         {
             yield return "add";
-            if (paths == null)
-            {
-                yield return "--all";
-            }
-            else
+            if (paths?.Any() ?? false)
             {
                 yield return "--";
                 foreach (var path in paths.Select(QuoteEscape))
                 {
                     yield return path;
                 }
+            }
+            else
+            {
+                yield return "--all";
             }
         }
 
