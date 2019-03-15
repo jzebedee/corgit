@@ -145,6 +145,9 @@ namespace corgit
         public Task<ExecutionResult> CheckoutAsync(string treeish, IEnumerable<string> paths = null, GitArguments.CheckoutOptions options = default)
             => RunGitAsync(GitArguments.Checkout(treeish, paths, options));
 
+        public Task<ExecutionResult> CheckoutNewBranchAsync(string branchName, bool force = false, string startPoint = null)
+            => RunGitAsync(GitArguments.CheckoutNewBranch(branchName, force, startPoint));
+
         public Task<ExecutionResult> AddAsync(IEnumerable<string> paths)
             => RunGitAsync(GitArguments.Add(paths));
 

@@ -148,14 +148,10 @@ namespace corgit
         public struct CheckoutOptions
         {
             public readonly bool Track;
-            public readonly bool Create;
-            public readonly string StartPoint;
 
-            public CheckoutOptions(bool track = false, bool create = false, string startPoint = null)
+            public CheckoutOptions(bool track = false)
             {
                 Track = track;
-                Create = create;
-                StartPoint = startPoint;
             }
         }
         public static IEnumerable<string> Checkout(string treeish, IEnumerable<string> paths = null, GitArguments.CheckoutOptions options = default)
@@ -165,15 +161,6 @@ namespace corgit
 
             yield return "checkout";
             yield return "-q";
-
-            if(options.Create)
-            {
-                yield return "-b";
-                if(!string.IsNullOrEmpty(options.StartPoint))
-                {
-                    yield return options.StartPoint;
-                }
-            }
 
             if (options.Track)
             {
@@ -189,6 +176,20 @@ namespace corgit
                 {
                     yield return path;
                 }
+            }
+        }
+        public static IEnumerable<string> CheckoutNewBranch(string branchName, bool force = false, string startPoint = null)
+        {
+            if (string.IsNullOrWhiteSpace(branchName))
+                throw new ArgumentNullException(nameof(branchName));
+
+            yield return "checkout";
+            yield return "-q";
+
+            yield return $"-{(force ? "B" : "b")} {branchName}";
+            if (!string.IsNullOrWhiteSpace(startPoint))
+            {
+                yield return startPoint;
             }
         }
 
