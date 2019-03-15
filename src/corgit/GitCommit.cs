@@ -9,7 +9,8 @@ namespace corgit
         public GitCommit(string hash,
                          string message,
                          string[] parents,
-                         string authorEmail)
+                         string authorEmail,
+                         DateTimeOffset authorDate)
         {
             if (hash?.Length != 40)
                 throw new ArgumentException("Invalid SHA1 hash", nameof(hash));
@@ -18,12 +19,14 @@ namespace corgit
             this.Message = message;
             this.Parents = parents;
             this.AuthorEmail = authorEmail;
+            this.AuthorDate = authorDate;
         }
 
         public string Hash { get; }
         public string Message { get; }
         public string[] Parents { get; }
         public string AuthorEmail { get; }
+        public DateTimeOffset AuthorDate { get; }
 
         public string Subject
         {
@@ -42,7 +45,8 @@ namespace corgit
                && other.Hash == Hash
                && other.Message == Message
                && StructuralComparisons.StructuralEqualityComparer.Equals(other.Parents, Parents)
-               && other.AuthorEmail == AuthorEmail;
+               && other.AuthorEmail == AuthorEmail
+               && other.AuthorDate == AuthorDate;
 
         public override int GetHashCode()
         {
@@ -51,6 +55,7 @@ namespace corgit
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Message);
             hashCode = hashCode * -1521134295 + StructuralComparisons.StructuralEqualityComparer.GetHashCode(Parents);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(AuthorEmail);
+            hashCode = hashCode * -1521134295 + EqualityComparer<DateTimeOffset>.Default.GetHashCode(AuthorDate);
             return hashCode;
         }
 
