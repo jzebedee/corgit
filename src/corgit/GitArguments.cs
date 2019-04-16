@@ -69,11 +69,13 @@ namespace corgit
         {
             public readonly int? MaxEntries;
             public readonly bool Reverse;
+            public readonly bool All;
 
-            public LogOptions(int? maxEntries = 32, bool reverse = false)
+            public LogOptions(int? maxEntries = 32, bool reverse = false, bool all = false)
             {
                 MaxEntries = maxEntries;
                 Reverse = reverse;
+                All = all;
             }
         }
         public static IEnumerable<string> Log(LogOptions options = default, IEnumerable<string> paths = null)
@@ -92,6 +94,11 @@ namespace corgit
             if (options.Reverse)
             {
                 yield return "--reverse";
+            }
+
+            if(options.All)
+            {
+                yield return "--all";
             }
 
             if (paths != null)
