@@ -107,7 +107,7 @@ namespace corgit
             return commits;
         }
 
-        private static readonly Regex r_parseCommit = new Regex(@"^([0-9a-f]{40})\n(\d+)\n(.*)\n(.*)\n([\s\S]*)$", RegexOptions.Multiline | RegexOptions.Compiled);
+        private static readonly Regex r_parseCommit = new Regex(@"^(?<hash>[0-9a-f]{40}) (?<refs>.*)?\n(?<authorDate>\d+)\n(?<authorEmail>.*)\n(?<parentHashes>( [0-9a-f]{40})*)\n(?<rawBody>[\s\S]*)$", RegexOptions.Multiline | RegexOptions.Compiled);
         public static GitCommit ParseCommit(string commit)
         {
             var match = r_parseCommit.Match(commit.Trim());
@@ -116,23 +116,23 @@ namespace corgit
                 return null;
             }
 
-            var hash = match.Groups[1].Value;
+            var hash = match.Groups["hash"].Value;
 
             DateTimeOffset authorDate;
             {
-                var unixTimeGroup = match.Groups[2].Value;
+                var unixTimeGroup = match.Groups["authorDate"].Value;
                 authorDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(unixTimeGroup));
             }
 
-            var authorEmail = match.Groups[3].Value;
+            var authorEmail = match.Groups["authorEmail"].Value;
 
             string[] parents;
             {
-                var parentGroup = match.Groups[4];
+                var parentGroup = match.Groups["parentHashes"];
                 parents = (parentGroup.Success && !string.IsNullOrEmpty(parentGroup.Value)) ? parentGroup.Value.Split(' ') : null;
             }
 
-            var message = match.Groups[5].Value;
+            var message = match.Groups["rawBody"].Value;
 
             return new GitCommit(hash, message, parents, authorEmail, authorDate);
         }
