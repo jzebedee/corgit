@@ -9,6 +9,7 @@ namespace corgit
         public GitCommit(string hash,
                          string message,
                          string[] parents,
+                         string[] refs,
                          string authorEmail,
                          DateTimeOffset authorDate)
         {
@@ -18,6 +19,7 @@ namespace corgit
             this.Hash = hash;
             this.Message = message;
             this.Parents = parents;
+            this.Refs = refs;
             this.AuthorEmail = authorEmail;
             this.AuthorDate = authorDate;
         }
@@ -25,6 +27,7 @@ namespace corgit
         public string Hash { get; }
         public string Message { get; }
         public string[] Parents { get; }
+        public string[] Refs { get; }
         public string AuthorEmail { get; }
         public DateTimeOffset AuthorDate { get; }
 
@@ -45,6 +48,7 @@ namespace corgit
                && other.Hash == Hash
                && other.Message == Message
                && StructuralComparisons.StructuralEqualityComparer.Equals(other.Parents, Parents)
+               && StructuralComparisons.StructuralEqualityComparer.Equals(other.Refs, Refs)
                && other.AuthorEmail == AuthorEmail
                && other.AuthorDate == AuthorDate;
 
@@ -54,6 +58,7 @@ namespace corgit
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Hash);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Message);
             hashCode = hashCode * -1521134295 + StructuralComparisons.StructuralEqualityComparer.GetHashCode(Parents);
+            hashCode = hashCode * -1521134295 + StructuralComparisons.StructuralEqualityComparer.GetHashCode(Refs);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(AuthorEmail);
             hashCode = hashCode * -1521134295 + EqualityComparer<DateTimeOffset>.Default.GetHashCode(AuthorDate);
             return hashCode;
