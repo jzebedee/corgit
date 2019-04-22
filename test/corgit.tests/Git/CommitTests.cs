@@ -38,7 +38,7 @@ namespace corgit.tests
             var expected = new GitCommit("d01ec56a830e10afe94d0fce6e61e9837eef381b",
                                          "This is a commit message.",
                                          new[] { "8e5a374372b8393906c7e380dbb09349c5385554" },
-                                         Array.Empty<string>(),
+                                         new[] { "somebranchname123" },
                                          "john.doe@mail.com",
                                          DateTimeOffset.FromUnixTimeSeconds(1234567));
             var actual = GitParsing.ParseCommit(GIT_OUTPUT_SINGLE_REF);
@@ -76,7 +76,7 @@ namespace corgit.tests
             var expected = new GitCommit("1e1c799a41204d17181d98403dd4f581b369aea9",
                                          "This is a commit message.",
                                          new[] { "8e5a374372b8393906c7e380dbb09349c5385554", "df27d8c75b129ab9b178b386077da2822101b217" },
-                                         Array.Empty<string>(),
+                                         new[] { "restore1", "restore2", "restore3", "restore4" },
                                          "john.doe@mail.com",
                                          DateTimeOffset.FromUnixTimeSeconds(1234567));
             var actual = GitParsing.ParseCommit(GIT_OUTPUT_MULTIPLE_REFS);
