@@ -120,5 +120,24 @@ namespace corgit.tests
             var actual = GitParsing.ParseCommit(GIT_OUTPUT_NO_PARENTS);
             Assert.StrictEqual(expected, actual);
         }
+
+        [Fact]
+        public void ParseHeadRefCommit()
+        {
+            const string GIT_OUTPUT_NO_PARENTS = "52c293a05038d865604c2284aa8698bd087915a1 HEAD -> somebranch123\n"
+                                                 + "1234567\n"
+                                                 + "john.doe@mail.com\n"
+                                                 + "\n"
+                                                 + "This is a commit message.";
+
+            var expected = new GitCommit("52c293a05038d865604c2284aa8698bd087915a1",
+                                         "This is a commit message.",
+                                         Array.Empty<string>(),
+                                         new[] { "HEAD -> somebranch123" },
+                                         "john.doe@mail.com",
+                                         DateTimeOffset.FromUnixTimeSeconds(1234567));
+            var actual = GitParsing.ParseCommit(GIT_OUTPUT_NO_PARENTS);
+            Assert.StrictEqual(expected, actual);
+        }
     }
 }
