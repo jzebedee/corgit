@@ -32,7 +32,7 @@ steps:
 - task: PublishPipelineArtifact@1
   displayName: 'Publish artifacts (bin)'
   inputs:
-    targetPath: '$(Pipeline.Workspace)/bin'
+    targetPath: '$(Build.ArtifactStagingDirectory)/bin'
     artifact: 'bin'
 - task: DotNetCoreCLI@2
   displayName: Pack
@@ -47,5 +47,5 @@ steps:
 - task: PublishPipelineArtifact@1
   displayName: 'Publish artifacts (pkg)'
   inputs:
-    targetPath: '$(Pipeline.Workspace)/pkg'
+    targetPath: '$(Build.ArtifactStagingDirectory)/pkg'
     artifact: 'pkg'
