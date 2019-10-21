@@ -1,34 +1,48 @@
-# Build ASP.NET Core project using Azure Pipelines
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core?view=vsts
+trigger:
+- master
 
 pool:
-  vmImage: 'Ubuntu 16.04'
-  
+  vmImage: 'ubuntu-latest'
 variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: DotNetCoreInstaller@0
-  displayName: 'Use .NET Core SDK Tool Installer'
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk >=3.x'
   inputs:
-    version: 2.2.100
-- script: |
-    dotnet build   src/corgit --configuration $(buildConfiguration)            --output $(Build.BinariesDirectory)
-  displayName: 'dotnet build $(buildConfiguration)'
+    packageType: sdk
+# workaround for 'UseDotNet@2 cant find sdk version matching 3.x #11569'
+# https://github.com/microsoft/azure-pipelines-tasks/issues/11569
+    version: 3.0.x
+#   version: 3.x
 - task: DotNetCoreCLI@2
+  displayName: Build
   inputs:
-    command: test
-    projects: '**/*tests/*.csproj'
+    command: build
+    projects: 'src/**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/bin'
+- task: DotNetCoreCLI@2
+  displayName: Test
+  inputs:
+    command: 'test'
+    projects: 'test/**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
-    displayName: 'dotnet test $(buildConfiguration)'
-- script: |
-    dotnet pack    src/corgit --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/package --version-suffix 'CI-$(Build.BuildNumber)'
-    dotnet publish src/corgit --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/pub
-- task: PublishBuildArtifacts@1
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish artifacts (bin)'
   inputs:
-    pathtoPublish: $(Build.ArtifactStagingDirectory)/package
-    ArtifactName: 'package'
-- task: PublishBuildArtifacts@1
+    targetPath: '$(Build.ArtifactStagingDirectory)/bin'
+    artifact: 'bin'
+- task: DotNetCoreCLI@2
+  displayName: Pack
   inputs:
-    pathtoPublish: $(Build.ArtifactStagingDirectory)/pub
-    ArtifactName: 'pub'
+    command: pack
+    includesource: true
+    includesymbols: true
+    arguments: '--configuration $(buildConfiguration) --version-suffix CI-$(Build.BuildNumber)'
+    projects: 'src/**/*.csproj'
+    packDirectory: '$(Build.ArtifactStagingDirectory)/pkg'
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish artifacts (pkg)'
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)/pkg'
+    artifact: 'pkg'
