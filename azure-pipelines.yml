@@ -15,8 +15,6 @@ steps:
 # https://github.com/microsoft/azure-pipelines-tasks/issues/11569
     version: 3.0.x
 #   version: 3.x
-
-
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
@@ -27,7 +25,7 @@ steps:
   displayName: Test
   inputs:
     command: 'test'
-    projects: 'src/**/*Tests/*.csproj'
+    projects: 'test/**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
 - task: PublishPipelineArtifact@1
   displayName: 'Publish artifacts (bin)'
@@ -40,8 +38,7 @@ steps:
     command: pack
     includesource: true
     includesymbols: true
-    nobuild: true
-    arguments: '--version-suffix CI-$(Build.BuildNumber)'
+    arguments: '--configuration $(buildConfiguration) --version-suffix CI-$(Build.BuildNumber)'
     projects: 'src/**/*.csproj'
     packDirectory: '$(Build.ArtifactStagingDirectory)/pkg'
 - task: PublishPipelineArtifact@1
