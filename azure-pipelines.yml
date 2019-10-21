@@ -20,13 +20,13 @@ steps:
   inputs:
     command: build
     projects: 'src/**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/bin'
+    arguments: '-c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/bin'
 - task: DotNetCoreCLI@2
   displayName: Test
   inputs:
     command: 'test'
     projects: 'test/**/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    arguments: '-c $(buildConfiguration)'
 - task: PublishPipelineArtifact@1
   displayName: 'Publish artifacts (bin)'
   inputs:
@@ -38,7 +38,7 @@ steps:
     command: pack
     includesource: true
     includesymbols: true
-    arguments: '--configuration $(buildConfiguration) --version-suffix CI-$(Build.BuildNumber)'
+    arguments: '-c $(buildConfiguration) --version-suffix ''CI-$(Build.BuildNumber)'''
     projects: 'src/**/*.csproj'
     packDirectory: '$(Build.ArtifactStagingDirectory)/pkg'
 - task: PublishPipelineArtifact@1
