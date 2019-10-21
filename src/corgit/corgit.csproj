@@ -2,10 +2,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <VersionPrefix>0.2</VersionPrefix>
+    <VersionPrefix>0.3</VersionPrefix>
     <Authors>jzebedee</Authors>
     <PackageProjectUrl>https://github.com/jzebedee/corgit</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/jzebedee/corgit/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/jzebedee/corgit</RepositoryUrl>
     <PackageTags>git corgit mingit git-for-windows libgit libgit2 libgit2sharp git.net git# gitsharp source-control scm</PackageTags>
     <Description>Minimal .NET Standard wrapper library to run and parse output from the git command-line utility</Description>
@@ -14,6 +14,12 @@
     <ProjectGuid>{35650b20-07fa-458b-bcc0-6ffbf185938a}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.2" />
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>
