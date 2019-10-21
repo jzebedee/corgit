@@ -10,6 +10,8 @@ namespace corgit
 {
     public class Corgit
     {
+        private static readonly Encoding Utf8NoBOM = new UTF8Encoding(false);
+
         private readonly string _gitPath;
         private readonly string _workingDirectory;
 
@@ -22,7 +24,9 @@ namespace corgit
                     WorkingDirectory = _workingDirectory,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
-                    RedirectStandardError = true
+                    RedirectStandardError = true,
+                    StandardErrorEncoding = Utf8NoBOM,
+                    StandardOutputEncoding = Utf8NoBOM
                 },
             };
 
@@ -89,27 +93,30 @@ namespace corgit
                                                        string stdin = null,
                                                        IReadOnlyDictionary<string, string> env = null)
         {
-            using (var proc = CreateGitProcess(arguments, env))
+            using var proc = CreateGitProcess(arguments, env);
+            if (!string.IsNullOrEmpty(stdin))
             {
-                proc.StartInfo.RedirectStandardInput = stdin != null;
-                var t = StartGitProcessAsync(proc);
-
-                if (!string.IsNullOrEmpty(stdin))
-                {
-                    using (proc.StandardInput)
-                    {
-                        await proc.StandardInput.WriteAsync(stdin);
-                    }
-                }
-
-                return await t;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.StandardInputEncoding = Utf8NoBOM;
             }
+
+            var t = StartGitProcessAsync(proc);
+            if (!string.IsNullOrEmpty(stdin))
+            {
+                //necessary to flush and close or git will continue waiting for more input
+                using (proc.StandardInput)
+                {
+                    await proc.StandardInput.WriteAsync(stdin);
+                }
+            }
+
+            return await t;
         }
 
         public Task<ExecutionResult> RunGitAsync(IEnumerable<string> arguments,
                                                 string stdin = null,
                                                 IReadOnlyDictionary<string, string> env = null)
-           => RunGitAsync(string.Join(" ", arguments), stdin, env);
+           => RunGitAsync(string.Join(' ', arguments), stdin, env);
 
         public Corgit(string gitPath, string workingDirectory)
         {
