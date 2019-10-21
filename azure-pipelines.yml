@@ -32,15 +32,8 @@ steps:
   inputs:
     targetPath: '$(Build.ArtifactStagingDirectory)/bin'
     artifact: 'bin'
-- task: DotNetCoreCLI@2
-  displayName: Pack
-  inputs:
-    command: pack
-    includesource: true
-    includesymbols: true
-    arguments: '-c $(buildConfiguration) --version-suffix ''CI-$(Build.BuildNumber)'''
-    projects: 'src/**/*.csproj'
-    packDirectory: '$(Build.ArtifactStagingDirectory)/pkg'
+- script: dotnet pack src/corgit/corgit.csproj -c $(buildConfiguration) --include-source --include-symbols -o $(Build.ArtifactStagingDirectory)/pkg --version-suffix ''CI-$(Build.BuildNumber)''
+  displayName: 'Pack'
 - task: PublishPipelineArtifact@1
   displayName: 'Publish artifacts (pkg)'
   inputs:
